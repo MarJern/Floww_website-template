@@ -5,6 +5,7 @@ import ServicesSection from "@/components/sections/ServicesSection";
 import SeoCallout from "@/components/sections/SeoCallout";
 import WorkSection from "@/components/sections/WorkSection";
 import AboutSection from "@/components/sections/AboutSection";
+import FAQSection from "@/components/sections/FAQSection";
 import ContactSection from "@/components/sections/ContactSection";
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ export default function Home() {
       <WorkSection />
       <SeoCallout />
       <AboutSection />
+      <FAQSection />
       <ContactSection />
     </>
   );
