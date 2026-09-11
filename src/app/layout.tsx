@@ -21,23 +21,27 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://flowwmedia.no'),
   title: {
     template: "%s | Floww Media",
-    default: "Floww Media | Frontend & SEO",
+    default: "Floww Media | Skreddersydde nettsider og SEO",
   },
   description: "High-end frontend development paired with expert SEO architecture. A minimalistic, high-converting portfolio.",
   openGraph: {
-    title: "Floww Media | Frontend & SEO",
+    title: "Floww Media | Skreddersydde nettsider og SEO",
     description: "High-end frontend development paired with expert SEO architecture. A minimalistic, high-converting portfolio.",
-    url: "https://flowwmedia.example.com",
+    url: "https://flowwmedia.no",
     siteName: "Floww Media",
-    locale: "en_US",
+    locale: "nb_NO",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Floww Media | Frontend & SEO",
+    title: "Floww Media | Skreddersydde nettsider og SEO",
     description: "High-end frontend development paired with expert SEO architecture. A minimalistic, high-converting portfolio.",
+  },
+  alternates: {
+    canonical: '/',
   },
 };
 
