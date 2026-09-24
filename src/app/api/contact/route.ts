@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from: "Floww Media Leads <onboarding@resend.dev>",
-      to: "kontakt@flowwmedia.no",
+      to: "marjajern@gmail.com",
       replyTo: email,
       subject: `Ny forespørsel om SEO-audit fra ${company}`,
       html: `
