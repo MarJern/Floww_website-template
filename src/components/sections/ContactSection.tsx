@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "../ui/Card";
 
 export default function ContactSection() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [service, setService] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,11 +15,12 @@ export default function ContactSection() {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      name: formData.get("name") as string,
-      company: formData.get("company") as string,
-      email: formData.get("email") as string,
-      service: formData.get("service") as string,
-      message: formData.get("message") as string,
+      name: formData.get("navn") as string,
+      company: formData.get("klinikk") as string,
+      address: formData.get("adresse") as string,
+      email: formData.get("epost") as string,
+      phone: formData.get("telefon") as string,
+      message: formData.get("melding") as string,
     };
 
     try {
@@ -35,7 +37,6 @@ export default function ContactSection() {
       }
 
       setStatus("success");
-      setService("");
       (e.target as HTMLFormElement).reset();
     } catch (error) {
       console.error("Fetch error:", error);
@@ -45,127 +46,139 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="kontakt" className="py-24 md:py-32 bg-brand-olive px-6 md:px-12" aria-labelledby="kontakt-heading">
-      <div className="max-w-7xl mx-auto">
-        <div className="max-w-2xl text-brand-dark">
-          <h2 id="kontakt-heading" className="text-3xl md:text-4xl mb-8">
-            La oss ta en prat!
-          </h2>
-          <p className="text-lg text-brand-dark/70 mb-12 text-pretty">
-            Klar for å løfte din digitale tilstedeværelse? Fyll ut skjemaet nedenfor, så hører du fra oss innen 24 timer.
-          </p>
+    <section id="kontakt" className="w-full bg-brand-light py-[clamp(3rem,6.5vw,5.4rem)] text-brand-dark">
+      <div className="mx-auto max-w-3xl w-full px-4 sm:px-6 md:px-8">
 
-          {status === "success" && (
-            <div className="mb-12 p-6 border border-brand-dark bg-brand-dark/5" role="alert">
-              <strong className="block text-lg mb-2">Melding mottatt</strong>
-              <p className="text-brand-dark/80">Takk for henvendelsen. Vi tar kontakt med deg snart.</p>
+        <Card variant="dark" className="border border-brand-light/10 shadow-sm mb-12">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+
+            {/* Rad 1: Navn og Klinikk */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="navn" className="text-micro font-medium text-brand-light">Navn</label>
+                <input
+                  type="text"
+                  id="navn"
+                  name="navn"
+                  disabled={status === "loading"}
+                  className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors disabled:opacity-50"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="klinikk" className="text-micro font-medium text-brand-light">Klinikk</label>
+                <input
+                  type="text"
+                  id="klinikk"
+                  name="klinikk"
+                  disabled={status === "loading"}
+                  className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors disabled:opacity-50"
+                  required
+                />
+              </div>
             </div>
-          )}
 
-          {status === "error" && (
-            <div className="mb-12 p-6 border border-red-500 bg-red-500/20 text-red-200" role="alert">
-              <p>{errorMessage}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-10" noValidate>
-            <div className="flex flex-col">
-              <label htmlFor="name" className="text-sm font-bold uppercase tracking-widest mb-2">
-                Navn
-              </label>
+            {/* Rad 2: Adresse */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="adresse" className="text-micro font-medium text-brand-light">Adresse</label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                required
-                className="bg-transparent border-0 border-b border-brand-dark/30 py-3 px-0 text-lg text-brand-dark focus:ring-0 focus-visible:outline-brand-light focus:border-brand-light transition-colors duration-300 placeholder-brand-dark/60"
-                placeholder="Ola Nordmann"
+                id="adresse"
+                name="adresse"
                 disabled={status === "loading"}
+                className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors disabled:opacity-50"
+                required
               />
+              <p className="text-micro text-brand-light/50 m-0 mt-1">
+                Gateadresse og postnummer. Vi søker fra deres adresse, ikke fra vår.
+              </p>
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="company" className="text-sm font-bold uppercase tracking-widest mb-2">
-                Bedrift
-              </label>
-              <input
-                type="text"
-                id="company"
-                name="company"
-                required
-                className="bg-transparent border-0 border-b border-brand-dark/30 py-3 px-0 text-lg text-brand-dark focus:ring-0 focus-visible:outline-brand-light focus:border-brand-light transition-colors duration-300 placeholder-brand-dark/60"
-                placeholder="Acme AS"
-                disabled={status === "loading"}
-              />
+            {/* Rad 3: E-post og Telefon */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="epost" className="text-micro font-medium text-brand-light">E-post</label>
+                <input
+                  type="email"
+                  id="epost"
+                  name="epost"
+                  disabled={status === "loading"}
+                  className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors disabled:opacity-50"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="telefon" className="text-micro font-medium text-brand-light">Telefon</label>
+                <input
+                  type="tel"
+                  id="telefon"
+                  name="telefon"
+                  disabled={status === "loading"}
+                  className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors disabled:opacity-50"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="email" className="text-sm font-bold uppercase tracking-widest mb-2">
-                E-post
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                className="bg-transparent border-0 border-b border-brand-dark/30 py-3 px-0 text-lg text-brand-dark focus:ring-0 focus-visible:outline-brand-light focus:border-brand-light transition-colors duration-300 placeholder-brand-dark/60"
-                placeholder="ola@eksempel.no"
-                disabled={status === "loading"}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="service" className="text-sm font-bold uppercase tracking-widest mb-2">
-                Hva trenger dere hjelp til?
-              </label>
-              <select
-                id="service"
-                name="service"
-                required
-                value={service}
-                onChange={(e) => setService(e.target.value)}
-                className="bg-transparent border-0 border-b border-brand-dark/30 py-3 px-0 text-lg text-brand-dark focus:ring-0 focus-visible:outline-brand-light focus:border-brand-light transition-colors duration-300"
-                disabled={status === "loading"}
-              >
-                <option value="" disabled className="bg-brand-olive text-brand-dark">
-                  Velg en tjeneste...
-                </option>
-                <option value="Ny skreddersydd nettside" className="bg-brand-olive text-brand-dark">
-                  Ny skreddersydd nettside
-                </option>
-                <option value="SEO & synlighet (eksisterende side)" className="bg-brand-olive text-brand-dark">
-                  SEO & synlighet (eksisterende side)
-                </option>
-                <option value="Begge deler / Usikker" className="bg-brand-olive text-brand-dark">
-                  Begge deler / Usikker
-                </option>
-              </select>
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="message" className="text-sm font-bold uppercase tracking-widest mb-2">
-                Hva ønsker du å oppnå?
-              </label>
+            {/* Rad 4: Valgfritt felt */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="melding" className="text-micro font-medium text-brand-light">Noe vi bør vite? (valgfritt)</label>
               <textarea
-                id="message"
-                name="message"
-                required
+                id="melding"
+                name="melding"
                 rows={4}
-                className="bg-transparent border-0 border-b border-brand-dark/30 py-3 px-0 text-lg text-brand-dark focus:ring-0 focus-visible:outline-brand-light focus:border-brand-light transition-colors duration-300 resize-none placeholder-brand-dark/60"
-                placeholder="Beskriv målene dine kort..."
                 disabled={status === "loading"}
-              />
+                className="w-full bg-brand-light/5 border border-brand-light/20 rounded-sm px-4 py-3 text-brand-light placeholder:text-brand-light/30 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors resize-y disabled:opacity-50"
+              ></textarea>
             </div>
 
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="inline-flex items-center justify-center bg-brand-accent text-brand-light px-10 py-5 font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {status === "loading" ? "Sender..." : "Send henvendelse"}
-            </button>
+            {/* Knapp */}
+            <div className="mt-2">
+              <Button type="submit" disabled={status === "loading"} className="w-full sm:w-auto">
+                {status === "loading" ? "Sender..." : "Be om gratis audit"}
+              </Button>
+            </div>
           </form>
+        </Card>
+
+        {/* Suksess / Feil-meldinger forblir uendret */}
+        {status === "success" && (
+          <div className="mb-10 p-6 border border-brand-accent/50 bg-brand-accent/10 rounded-sm" role="alert">
+            <strong className="block text-lg mb-2 text-brand-pine font-heading">Melding mottatt</strong>
+            <p className="text-brand-dark/80 max-w-prose m-0">Takk for henvendelsen. Vi tar en kikk og kontakter deg snart.</p>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="mb-10 p-6 border border-red-500/50 bg-red-500/10 text-red-200 rounded-sm" role="alert">
+            <p className="m-0">{errorMessage}</p>
+          </div>
+        )}
+
+        {/* Footer Info (Sentert under skjemaet) */}
+        <div className="border-t border-brand-dark/10 pt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div>
+              <p className="text-micro uppercase text-brand-dark/50 mb-2 font-bold tracking-[0.15em]">E-post</p>
+              <a href="mailto:kontakt@flowwmedia.no" className="text-fluid-p-lg underline decoration-brand-accent/40 text-brand-dark hover:text-brand-pine transition-colors font-heading font-medium">
+                kontakt@flowwmedia.no
+              </a>
+            </div>
+            <div>
+              <p className="text-micro uppercase text-brand-dark/50 mb-2 font-bold tracking-[0.15em]">Telefon</p>
+              <a href="tel:45843554" className="text-fluid-p-lg underline decoration-brand-accent/40 text-brand-dark hover:text-brand-pine transition-colors font-heading font-medium">
+                +47 458 43 554
+              </a>
+            </div>
+            <div>
+              <p className="text-micro uppercase text-brand-dark/50 mb-2 font-bold tracking-[0.15em]">Adresse</p>
+              <p className="text-fluid-p-lg text-brand-dark font-heading font-medium m-0">
+                Edvard Storms gate 2, Oslo
+              </p>
+            </div>
+          </div>
         </div>
+
       </div>
     </section>
   );

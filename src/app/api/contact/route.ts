@@ -6,11 +6,12 @@ const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy");
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, company, email, service, message } = body;
+    const { name, company, address, email, phone, message } = body;
 
-    if (!name || !email || !message || !service) {
+    // Sjekker at alle påkrevde felt fra det nye skjemaet er med. (message er valgfritt)
+    if (!name || !company || !address || !email || !phone) {
       return NextResponse.json(
-        { error: "Name, email, service, and message are required." },
+        { error: "Navn, klinikk, adresse, e-post og telefon er påkrevd." },
         { status: 400 }
       );
     }
@@ -19,15 +20,18 @@ export async function POST(req: Request) {
       from: "Floww Media Leads <onboarding@resend.dev>",
       to: "kontakt@flowwmedia.no",
       replyTo: email,
-      subject: `Ny forespørsel fra ${name}`,
+      subject: `Ny forespørsel om SEO-audit fra ${company}`,
       html: `
-        <h2>Ny forespørsel fra nettsiden</h2>
-        <p><strong>Tjeneste ønsket:</strong> ${service}</p>
-        <p><strong>Navn:</strong> ${name}</p>
-        <p><strong>Bedrift:</strong> ${company || "Ikke oppgitt"}</p>
+        <h2>Ny forespørsel om gratis audit</h2>
+        <p><strong>Klinikk:</strong> ${company}</p>
+        <p><strong>Adresse for audit:</strong> ${address}</p>
+        <hr />
+        <p><strong>Kontaktperson:</strong> ${name}</p>
+        <p><strong>Telefon:</strong> ${phone}</p>
         <p><strong>E-post:</strong> ${email}</p>
-        <p><strong>Prosjekt / Mål:</strong></p>
-        <p>${message}</p>
+        <br />
+        <p><strong>Ekstra info / Melding:</strong></p>
+        <p>${message ? message.replace(/\n/g, '<br/>') : "<em>Ingen ekstra info oppgitt.</em>"}</p>
       `,
     });
 
