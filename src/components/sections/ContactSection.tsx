@@ -135,7 +135,7 @@ export default function ContactSection() {
             {/* Knapp */}
             <div className="mt-2">
               <Button type="submit" disabled={status === "loading"} className="w-full sm:w-auto">
-                {status === "loading" ? "Sender..." : "Be om gratis audit"}
+                {status === "loading" ? "Sender..." : "Send skjema"}
               </Button>
             </div>
           </form>
