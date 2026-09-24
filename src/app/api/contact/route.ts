@@ -17,14 +17,14 @@ export async function POST(req: Request) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: "Floww Media Leads <onboarding@resend.dev>",
-      to: "marjajern@gmail.com",
+      from: "Floww Media <kontakt@flowwmedia.no>",
+      to: "kontakt@flowwmedia.no",
       replyTo: email,
       subject: `Ny forespørsel om SEO-audit fra ${company}`,
       html: `
-        <h2>Ny forespørsel om gratis audit</h2>
-        <p><strong>Klinikk:</strong> ${company}</p>
-        <p><strong>Adresse for audit:</strong> ${address}</p>
+        <h2>Ny forespørsel til Floww Media</h2>
+        <p><strong>Bedrift:</strong> ${company}</p>
+        <p><strong>Adresse:</strong> ${address}</p>
         <hr />
         <p><strong>Kontaktperson:</strong> ${name}</p>
         <p><strong>Telefon:</strong> ${phone}</p>
