@@ -92,14 +92,16 @@ export const AI_QUESTION_TEMPLATES: AiQuestionTemplate[] = [
 ];
 
 export interface AiQuestionParams {
-  tjeneste: string; // f.eks. "tannlege", "rørlegger"
+  tjeneste: string; // f.eks. "tannlege", "digitalbyrå"
+  tjenesteFlertall?: string; // f.eks. "tannleger", "digitalbyråer"
+  erIntetkjonn?: boolean; // true for "-byrå", "-senter", "-firma" osv.
   by: string; // f.eks. "Oslo"
-  bydel?: string; // f.eks. "Majorstuen", "Skøyen"
-  sted?: string; // f.eks. "Majorstuen stasjon" eller gatenavn
-  hovedtjeneste?: string; // f.eks. "tannlegesjekk", "rørleggervakt"
-  spesialtjeneste?: string; // f.eks. "akutt tannlege"
-  firmanavn: string; // f.eks. "Smilia"
-  attributt?: string; // f.eks. "som tar imot nye pasienter"
+  bydel?: string; // f.eks. "Majorstuen", "Oslo og omegn"
+  sted?: string; // f.eks. "Majorstuenkrysset", "Oslo sentrum"
+  hovedtjeneste?: string; // f.eks. "tannlegesjekk", "lokal SEO"
+  spesialtjeneste?: string; // f.eks. "akutt tannlege", "skreddersydde nettsider"
+  firmanavn: string; // f.eks. "Smilia", "Floww Media AS"
+  attributt?: string; // f.eks. "som tar imot nye pasienter", "med dokumenterte resultater"
 }
 
 export interface GeneratedAiQuestion {
@@ -109,22 +111,48 @@ export interface GeneratedAiQuestion {
   weight: number;
 }
 
+function capitalizeFirst(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 /**
- * Fills the 10 standard question templates with business specific parameters.
+ * Fills the 10 standard question templates with business specific parameters
+ * and correct Norwegian grammar (common vs. neuter gender, plural in Q10, and capitalization).
  */
 export function generateAiQuestions(params: AiQuestionParams): GeneratedAiQuestion[] {
   const by = params.by || 'Oslo';
-  const bydel = params.bydel || by;
-  const sted = params.sted || bydel;
+  const bydel = params.bydel || `${by} og omegn`;
+  const sted = params.sted || `${by} sentrum`;
   const tjeneste = params.tjeneste || 'bedrift';
+  const tjenesteFlertall = params.tjenesteFlertall || `${tjeneste}er`;
+  const erIntetkjonn = Boolean(params.erIntetkjonn);
   const firmanavn = params.firmanavn;
   const hovedtjeneste = params.hovedtjeneste || tjeneste;
-  const spesialtjeneste = params.spesialtjeneste || `akutt ${tjeneste}`;
-  const attributt = params.attributt || 'med gode åpningstider';
+  const spesialtjeneste = params.spesialtjeneste || `beste ${tjeneste}`;
+  const attributt = params.attributt || 'med gode referanser';
 
   return AI_QUESTION_TEMPLATES.map((tmpl) => {
-    let q = tmpl.template
-      .replace(/{tjeneste}/g, tjeneste)
+    let q = tmpl.template;
+
+    // Handle neuter vs common gender in Q1 ("Hvilket digitalbyrå" vs "Hvilken tannlege")
+    if (tmpl.code === 'Q1' && erIntetkjonn) {
+      q = q.replace(/^Hvilken\b/, 'Hvilket');
+    }
+
+    // Handle neuter vs common gender in Q7 ("et godt digitalbyrå" vs "en god tannlege")
+    if (tmpl.code === 'Q7' && erIntetkjonn) {
+      q = q.replace(/\ben god\b/, 'et godt');
+    }
+
+    // Use plural noun in Q10 ("Anbefal tre digitalbyråer..." / "Anbefal tre tannleger...")
+    if (tmpl.code === 'Q10') {
+      q = q.replace(/{tjeneste}/g, tjenesteFlertall);
+    } else {
+      q = q.replace(/{tjeneste}/g, tjeneste);
+    }
+
+    q = q
       .replace(/{by}/g, by)
       .replace(/{bydel}/g, bydel)
       .replace(/{sted}/g, sted)
@@ -132,6 +160,8 @@ export function generateAiQuestions(params: AiQuestionParams): GeneratedAiQuesti
       .replace(/{spesialtjeneste}/g, spesialtjeneste)
       .replace(/{firmanavn}/g, firmanavn)
       .replace(/{attributt}/g, attributt);
+
+    q = capitalizeFirst(q.trim());
 
     return {
       code: tmpl.code,

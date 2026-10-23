@@ -9,6 +9,7 @@ import {
   BusinessData,
   ProfileType,
 } from '../types';
+import { formatNorwegianCity } from '../utils/industry';
 
 /**
  * Normalizes an input URL or domain string to a clean domain.
@@ -743,9 +744,10 @@ export async function runPreFlightAndBrregResolve(
   const postcode =
     brregEnhet?.forretningsadresse?.postnummer ||
     brregEnhet?.beliggenhetsadresse?.postnummer;
-  const city =
+  const rawCity =
     brregEnhet?.forretningsadresse?.poststed ||
     brregEnhet?.beliggenhetsadresse?.poststed;
+  const city = rawCity ? formatNorwegianCity(rawCity) : undefined;
   const orgForm = brregEnhet?.organisasjonsform?.kode;
 
   return {
@@ -904,10 +906,11 @@ export const resolveModule: AuditModule = {
       brregEnhet?.forretningsadresse?.postnummer ||
       brregEnhet?.beliggenhetsadresse?.postnummer ||
       ctx.business.postcode;
-    const city =
+    const rawCity =
       brregEnhet?.forretningsadresse?.poststed ||
       brregEnhet?.beliggenhetsadresse?.poststed ||
       ctx.business.city;
+    const city = rawCity ? formatNorwegianCity(rawCity) : undefined;
     const nace = brregEnhet?.naeringskode1?.kode || ctx.business.nace;
     const naceName = brregEnhet?.naeringskode1?.beskrivelse || ctx.business.naceName;
     const orgForm = brregEnhet?.organisasjonsform?.kode || ctx.business.orgForm;

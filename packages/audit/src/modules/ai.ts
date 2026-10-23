@@ -101,21 +101,25 @@ export const aiModule: AuditModule = {
   async run(ctx: AuditContext): Promise<ModuleResult> {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
-    const city = ctx.business.city || 'Oslo';
     const industry = resolveIndustryTerms(ctx.business);
+    const city = industry.cityFormatted;
     const industryName = industry.primaryService;
     const timestamp = new Date().toISOString();
 
     ctx.log(`🤖 [AI] Starting LLM Visibility module for "${companyName}" (${domain})...`);
 
-    // 1. Generate the 10 standard question variations
+    // 1. Generate the 10 standard question variations using broad city/borough labels (never street address!)
     const questions = generateAiQuestions({
       tjeneste: industryName.toLowerCase(),
+      tjenesteFlertall: industry.pluralService.toLowerCase(),
+      erIntetkjonn: industry.isNeuter,
       by: city,
-      bydel: ctx.business.address ? ctx.business.address.split(' ')[0] : city,
+      bydel: industry.areaLabel,
+      sted: industry.placeLabel,
       firmanavn: companyName,
       hovedtjeneste: industry.serviceKeywords[1] || industryName,
       spesialtjeneste: industry.serviceKeywords[2] || `beste ${industryName}`,
+      attributt: industry.questionAttribute,
     });
 
     ctx.log(`Generated ${questions.length} question prompts (Q1 - Q10)`);
