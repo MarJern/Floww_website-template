@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { AuditModule, AuditContext, ModuleResult, Finding } from '../types';
+import { resolveIndustryTerms } from '../utils/industry';
 
 export interface PageCrawlData {
   url: string;
@@ -648,6 +649,8 @@ export const crawlModule: AuditModule = {
       },
     });
 
+    const industry = resolveIndustryTerms(ctx.business);
+
     // G011: Broken links (404)
     const brokenCount = summary.brokenLinks404Count;
     findings.push({
@@ -664,9 +667,9 @@ export const crawlModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '0 brutte lenker',
-        'Colosseum Tannlege': '0 brutte lenker',
-        'Blid Tannlege': '0 brutte lenker',
+        'Topp #1 i kartet': '0 brutte lenker',
+        'Topp #2 i kartet': '0 brutte lenker',
+        'Topp #3 i kartet': '0 brutte lenker',
       },
     });
 
@@ -685,9 +688,9 @@ export const crawlModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '100 % (Dentist, FAQPage, Service)',
-        'Colosseum Tannlege': '92 % (Dentist, MedicalClinic)',
-        'Blid Tannlege': '95 % (Dentist, FAQPage)',
+        'Topp #1 i kartet': `100 % (${industry.schemaTypesLabel})`,
+        'Topp #2 i kartet': `92 % (${industry.schemaTypesLabel})`,
+        'Topp #3 i kartet': `95 % (${industry.schemaTypesLabel})`,
       },
     });
 
@@ -752,8 +755,8 @@ export const crawlModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '94 % med by/bydel i Title',
-        'Colosseum Tannlege': '90 % med by/bydel i Title',
+        'Topp #1 i kartet': '94 % med by/bydel i Title',
+        'Topp #2 i kartet': '90 % med by/bydel i Title',
       },
     });
 
@@ -813,9 +816,9 @@ export const crawlModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '14 dedikerte tjenestesider',
-        'Colosseum Tannlege': '18 dedikerte tjenestesider',
-        'Blid Tannlege': '12 dedikerte tjenestesider',
+        'Topp #1 i kartet': '14 dedikerte tjenestesider',
+        'Topp #2 i kartet': '18 dedikerte tjenestesider',
+        'Topp #3 i kartet': '12 dedikerte tjenestesider',
       },
     });
 
@@ -833,8 +836,8 @@ export const crawlModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '85 % av tjenestesider har FAQ',
-        'Blid Tannlege': '80 % av tjenestesider har FAQ',
+        'Topp #1 i kartet': '85 % av tjenestesider har FAQ',
+        'Topp #3 i kartet': '80 % av tjenestesider har FAQ',
       },
     });
 
@@ -881,7 +884,7 @@ export const crawlModule: AuditModule = {
       value: { localTitlePct },
       evidence: {
         measuredNumber: localTitlePct,
-        snippet: `${localTitlePct} % av undersidene kombinerer behandling + by/bydel i sidetittel og H1`,
+        snippet: `${localTitlePct} % av undersidene kombinerer tjeneste + by/bydel i sidetittel og H1`,
         sourceLabel: 'Lokal innholds- og relevansanalyse',
         timestamp,
       },
@@ -894,24 +897,25 @@ export const crawlModule: AuditModule = {
       value: { servicePagesCount, expectedCoreServices, serviceCoveragePct },
       evidence: {
         measuredNumber: serviceCoveragePct,
-        snippet: `${servicePagesCount} av ${expectedCoreServices} hovedbehandlinger har egen lokal landingsside (${serviceCoveragePct} % dekning)`,
+        snippet: `${servicePagesCount} av ${expectedCoreServices} hovedtjenester har egen lokal landingsside (${serviceCoveragePct} % dekning)`,
         sourceLabel: 'Lokal tjenestearkitekturanalyse',
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '100 % dekning',
-        'Colosseum Tannlege': '100 % dekning',
+        'Topp #1 i kartet': '100 % dekning',
+        'Topp #2 i kartet': '100 % dekning',
       },
     });
 
     // B002: Annonserelevans: egen side per tjeneste for Google Ads Quality Score
+    const sampleKeywordsStr = industry.serviceKeywords.slice(1, 3).join(' og ') || industry.primaryService;
     findings.push({
       factorCode: 'B002',
       status: serviceCoveragePct >= 80 ? 'ok' : serviceCoveragePct >= 50 ? 'warn' : 'crit',
       value: { servicePagesCount, expectedCoreServices, serviceCoveragePct },
       evidence: {
         measuredNumber: serviceCoveragePct,
-        snippet: `Mangler dedikerte landingssider for ${expectedCoreServices - servicePagesCount} høy-margin søkeord i Google Ads (bl.a. tannimplantat og rotfylling), som gir lavere Quality Score og dyrere klikk`,
+        snippet: `Mangler dedikerte landingssider for ${Math.max(1, expectedCoreServices - servicePagesCount)} høy-margin søkeord i Google Ads (bl.a. ${sampleKeywordsStr}), som gir lavere Quality Score og dyrere klikk`,
         sourceLabel: 'Annonse- og landingssideanalyse',
         timestamp,
       },

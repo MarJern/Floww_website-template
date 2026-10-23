@@ -309,9 +309,9 @@ export const speedModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '1.8 s',
-        'Colosseum Tannlege': '2.1 s',
-        'Blid Tannlege': '1.6 s',
+        'Topp #1 i kartet': '1.8 s',
+        'Topp #2 i kartet': '2.1 s',
+        'Topp #3 i kartet': '1.6 s',
       },
     });
 
@@ -328,8 +328,8 @@ export const speedModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '115 ms',
-        'Blid Tannlege': '95 ms',
+        'Topp #1 i kartet': '115 ms',
+        'Topp #3 i kartet': '95 ms',
       },
     });
 
@@ -361,9 +361,9 @@ export const speedModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '89 / 100',
-        'Colosseum Tannlege': '84 / 100',
-        'Blid Tannlege': '92 / 100',
+        'Topp #1 i kartet': '89 / 100',
+        'Topp #2 i kartet': '84 / 100',
+        'Topp #3 i kartet': '92 / 100',
       },
     });
 
@@ -396,8 +396,8 @@ export const speedModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '1.8s LCP (Høy Quality Score)',
-        'Blid Tannlege': '1.6s LCP (Høy Quality Score)',
+        'Topp #1 i kartet': '1.8s LCP (Høy Quality Score)',
+        'Topp #3 i kartet': '1.6s LCP (Høy Quality Score)',
       },
     });
 

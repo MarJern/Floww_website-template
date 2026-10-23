@@ -10,7 +10,7 @@ import {
   eq,
   desc,
 } from '@floww/db';
-import { runFullAudit } from '@floww/audit';
+import { runFullAudit, runPreFlightAndBrregResolve } from '@floww/audit';
 import { requireAdminAuth, getTrustedAppOrigin } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
@@ -217,6 +217,13 @@ export async function POST(request: NextRequest) {
     // 2. Process each target and generate/link its Synlighetsrapport + Outreach row
     for (const target of targets) {
       try {
+        // Resolve real Brreg company metadata (orgnr, name, nace, naceName, city)
+        const preResolved = await runPreFlightAndBrregResolve(target.domain, {
+          skipBlacklist: true,
+          hintOrgnr: target.orgnr,
+          hintName: target.name,
+        }).catch(() => null);
+
         // Check if business already exists by domain or orgnr
         let [busRow] = await db
           .select()
@@ -224,28 +231,32 @@ export async function POST(request: NextRequest) {
           .where(eq(businesses.domain, target.domain))
           .limit(1);
 
-        if (!busRow && target.orgnr) {
+        const resolvedOrgnr = preResolved?.orgnr || target.orgnr;
+        if (!busRow && resolvedOrgnr) {
           [busRow] = await db
             .select()
             .from(businesses)
-            .where(eq(businesses.orgnr, target.orgnr))
+            .where(eq(businesses.orgnr, resolvedOrgnr))
             .limit(1);
         }
 
         if (!busRow) {
-          const orgnr = target.orgnr && /^\d{9}$/.test(target.orgnr)
-            ? target.orgnr
+          const orgnr = resolvedOrgnr && /^\d{9}$/.test(resolvedOrgnr)
+            ? resolvedOrgnr
             : generateSyntheticOrgnr(target.domain);
 
           const [insertedBus] = await db
             .insert(businesses)
             .values({
               orgnr,
-              name: target.name || target.domain.toUpperCase(),
+              name: preResolved?.companyName || target.name || target.domain.toUpperCase(),
               domain: target.domain,
-              nace: target.nace || nace || null,
-              postcode: target.postcode || '0150',
-              city: target.city || 'Oslo',
+              orgForm: preResolved?.orgForm ?? null,
+              nace: target.nace || preResolved?.nace || nace || null,
+              naceName: preResolved?.naceName ?? null,
+              address: preResolved?.address ?? null,
+              postcode: preResolved?.postcode || target.postcode || '0150',
+              city: preResolved?.city || target.city || 'Oslo',
               source: 'bulk',
               profileType: 'lokal',
             })
@@ -258,6 +269,23 @@ export async function POST(request: NextRequest) {
             })
             .returning();
           busRow = insertedBus;
+        } else if (preResolved) {
+          const [updatedBus] = await db
+            .update(businesses)
+            .set({
+              name: preResolved.companyName || busRow.name,
+              orgForm: preResolved.orgForm ?? busRow.orgForm,
+              nace: target.nace || preResolved.nace || busRow.nace,
+              naceName: preResolved.naceName ?? busRow.naceName,
+              address: preResolved.address ?? busRow.address,
+              postcode: preResolved.postcode ?? busRow.postcode,
+              city: preResolved.city ?? busRow.city,
+              source: 'bulk',
+              updatedAt: new Date(),
+            })
+            .where(eq(businesses.id, busRow.id))
+            .returning();
+          if (updatedBus) busRow = updatedBus;
         }
 
         // Check if we already have a recent report for this business
@@ -285,7 +313,7 @@ export async function POST(request: NextRequest) {
         let finalScore = existingReport ? Number(existingReport.scoreTotal) : 0;
         let finalNok = existingReport ? Number(existingReport.nokEstimate) : 0;
 
-        if (!existingReport) {
+        if (!existingReport || parsedDomains.length > 0) {
           const [jobRow] = await db
             .insert(auditJobs)
             .values({

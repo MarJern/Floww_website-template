@@ -330,9 +330,9 @@ export const gbpModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '4 tilleggskategorier',
-        'Colosseum Tannlege': '4 tilleggskategorier',
-        'Blid Tannlege': '3 tilleggskategorier',
+        'Topp #1 i kartet': '4 tilleggskategorier',
+        'Topp #2 i kartet': '4 tilleggskategorier',
+        'Topp #3 i kartet': '3 tilleggskategorier',
       },
     });
 
@@ -349,9 +349,9 @@ export const gbpModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 428,
-        'Colosseum Tannlege': 312,
-        'Blid Tannlege': 265,
+        'Topp #1 i kartet': 428,
+        'Topp #2 i kartet': 312,
+        'Topp #3 i kartet': 265,
       },
     });
 
@@ -379,9 +379,9 @@ export const gbpModule: AuditModule = {
           timestamp,
         },
         competitorValues: {
-          'Oslo Tannlegesenter': '3 dager siden',
-          'Colosseum Tannlege': '5 dager siden',
-          'Blid Tannlege': '2 dager siden',
+          'Topp #1 i kartet': '3 dager siden',
+          'Topp #2 i kartet': '5 dager siden',
+          'Topp #3 i kartet': '2 dager siden',
         },
       });
 
@@ -400,9 +400,9 @@ export const gbpModule: AuditModule = {
           timestamp,
         },
         competitorValues: {
-          'Oslo Tannlegesenter': '11.4 / mnd',
-          'Colosseum Tannlege': '8.2 / mnd',
-          'Blid Tannlege': '9.5 / mnd',
+          'Topp #1 i kartet': '11.4 / mnd',
+          'Topp #2 i kartet': '8.2 / mnd',
+          'Topp #3 i kartet': '9.5 / mnd',
         },
       });
     } else {
@@ -468,9 +468,9 @@ export const gbpModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '98 %',
-        'Colosseum Tannlege': '94 %',
-        'Blid Tannlege': '96 %',
+        'Topp #1 i kartet': '98 %',
+        'Topp #2 i kartet': '94 %',
+        'Topp #3 i kartet': '96 %',
       },
     });
 
@@ -490,9 +490,9 @@ export const gbpModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '95 % besvart',
-        'Colosseum Tannlege': '88 % besvart',
-        'Blid Tannlege': '92 % besvart',
+        'Topp #1 i kartet': '95 % besvart',
+        'Topp #2 i kartet': '88 % besvart',
+        'Topp #3 i kartet': '92 % besvart',
       },
     });
 
@@ -509,9 +509,9 @@ export const gbpModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '44 bilder',
-        'Colosseum Tannlege': '38 bilder',
-        'Blid Tannlege': '52 bilder',
+        'Topp #1 i kartet': '44 bilder',
+        'Topp #2 i kartet': '38 bilder',
+        'Topp #3 i kartet': '52 bilder',
       },
     });
 

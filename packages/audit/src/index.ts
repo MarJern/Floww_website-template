@@ -1,4 +1,5 @@
 export * from './types';
+export * from './utils/industry';
 export * from './ai/questions';
 export * from './modules/resolve';
 export * from './modules/gbp';

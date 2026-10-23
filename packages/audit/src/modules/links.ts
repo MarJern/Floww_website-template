@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { AuditModule, AuditContext, ModuleResult, Finding } from '../types';
 import { postDataForSeo } from '../clients/dataforseo';
+import { resolveIndustryTerms } from '../utils/industry';
 
 export interface AnchorTextItem {
   anchor: string;
@@ -201,8 +202,8 @@ export const linksModule: AuditModule = {
   async run(ctx: AuditContext): Promise<ModuleResult> {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
-    const primaryService = ctx.business.naceName || 'tannlege';
-    const serviceKeywords = [primaryService, 'tannbehandling', 'tannlegevakt', 'tannklinikk'];
+    const industry = resolveIndustryTerms(ctx.business);
+    const serviceKeywords = industry.serviceKeywords;
     const timestamp = new Date().toISOString();
 
     ctx.log(`🔗 [LINKS] Analyzing backlinks and domain authority for ${domain}...`);
@@ -280,7 +281,7 @@ export const linksModule: AuditModule = {
               category: 'generic',
             },
             {
-              anchor: serviceKeywords[0] || 'klinikk',
+              anchor: serviceKeywords[0] || 'tjenester',
               backlinks: Math.max(1, Math.round(totalBacklinks * 0.08)),
               referringDomains: 1,
               category: 'keyword',
@@ -313,9 +314,9 @@ export const linksModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '52 / 100',
-        'Colosseum Tannlege': '64 / 100',
-        'Blid Tannlege': '49 / 100',
+        'Topp #1 i kartet': '52 / 100',
+        'Topp #2 i kartet': '64 / 100',
+        'Topp #3 i kartet': '49 / 100',
       },
     });
 
@@ -327,14 +328,14 @@ export const linksModule: AuditModule = {
       value: { domainRank: summary.domainRank },
       evidence: {
         measuredNumber: summary.domainRank,
-        snippet: `Domenestyrke (Domain Rank) er ${summary.domainRank}/100 (konkurrentsnitt i Oslo: 55/100)`,
+        snippet: `Domenestyrke (Domain Rank) er ${summary.domainRank}/100 (konkurrentsnitt i ${ctx.business.city || 'Oslo'}: 55/100)`,
         sourceLabel: 'Off-page lenke- og autoritetsanalyse',
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 52,
-        'Colosseum Tannlege': 64,
-        'Blid Tannlege': 49,
+        'Topp #1 i kartet': 52,
+        'Topp #2 i kartet': 64,
+        'Topp #3 i kartet': 49,
       },
     });
 
@@ -352,9 +353,9 @@ export const linksModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '68 domener',
-        'Colosseum Tannlege': '92 domener',
-        'Blid Tannlege': '54 domener',
+        'Topp #1 i kartet': '68 domener',
+        'Topp #2 i kartet': '92 domener',
+        'Topp #3 i kartet': '54 domener',
       },
     });
 
@@ -371,9 +372,9 @@ export const linksModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 68,
-        'Colosseum Tannlege': 92,
-        'Blid Tannlege': 54,
+        'Topp #1 i kartet': 68,
+        'Topp #2 i kartet': 92,
+        'Topp #3 i kartet': 54,
       },
     });
 
@@ -390,9 +391,9 @@ export const linksModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 52,
-        'Colosseum Tannlege': 64,
-        'Blid Tannlege': 49,
+        'Topp #1 i kartet': 52,
+        'Topp #2 i kartet': 64,
+        'Topp #3 i kartet': 49,
       },
     });
 

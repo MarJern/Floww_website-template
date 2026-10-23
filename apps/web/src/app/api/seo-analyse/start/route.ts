@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       process.env.AUDIT_USE_FIXTURES === 'true' ||
       (isAdmin && body.useFixtures === true);
 
-    const allowForce = isAdmin && body.force === true;
+    const allowForce = isAdmin && body.force !== false;
     const allowInlineOverride = isAdmin && body.inline === true;
 
     // 2. Existing business lookup (to pass any known orgnr/name hints to Brreg)

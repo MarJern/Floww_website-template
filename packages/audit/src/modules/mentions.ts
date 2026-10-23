@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { AuditModule, AuditContext, ModuleResult, Finding } from '../types';
 import { postDataForSeo } from '../clients/dataforseo';
+import { resolveIndustryTerms } from '../utils/industry';
 
 export interface BrandMentionItem {
   domain: string;
@@ -187,6 +188,8 @@ export const mentionsModule: AuditModule = {
     const count = summary.totalMentions;
     const uniqueDomains = summary.uniqueDomainsCount;
     const editorialCount = summary.mentions.filter((m) => m.isEditorialOrNews).length;
+    const industry = resolveIndustryTerms(ctx.business);
+    const cityLabel = ctx.business.city || 'Oslo';
 
     // L107: Synlighet på «Beste i byen»-lister og redaksjonelle kåringer
     const l107Status: 'ok' | 'warn' | 'crit' = editorialCount >= 2 ? 'ok' : editorialCount === 1 ? 'warn' : 'crit';
@@ -199,14 +202,14 @@ export const mentionsModule: AuditModule = {
         snippet:
           editorialCount > 0
             ? `Nevnt i ${editorialCount} redaksjonell(e) kåring(er)/«beste i byen»-lister`
-            : '0 oppføringer på uavhengige «Beste tannlege i Oslo»-lister og redaksjonelle guider (høyeste enkeltfaktor for AI-anbefalinger)',
+            : `0 oppføringer på uavhengige «Beste ${industry.primaryService} i ${cityLabel}»-lister og redaksjonelle guider (høyeste enkeltfaktor for AI-anbefalinger)`,
         sourceLabel: 'Redaksjonell omtale- og kataloganalyse',
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '4 av 5 listesider',
-        'Colosseum Tannlege': '3 av 5 listesider',
-        'Blid Tannlege': '4 av 5 listesider',
+        'Topp #1 i kartet': '4 av 5 listesider',
+        'Topp #2 i kartet': '3 av 5 listesider',
+        'Topp #3 i kartet': '4 av 5 listesider',
       },
     });
 
@@ -228,9 +231,9 @@ export const mentionsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '19 omtaler',
-        'Colosseum Tannlege': '34 omtaler',
-        'Blid Tannlege': '22 omtaler',
+        'Topp #1 i kartet': '19 omtaler',
+        'Topp #2 i kartet': '34 omtaler',
+        'Topp #3 i kartet': '22 omtaler',
       },
     });
 
@@ -246,8 +249,8 @@ export const mentionsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '19 omtaler',
-        'Colosseum Tannlege': '34 omtaler',
+        'Topp #1 i kartet': '19 omtaler',
+        'Topp #2 i kartet': '34 omtaler',
       },
     });
 

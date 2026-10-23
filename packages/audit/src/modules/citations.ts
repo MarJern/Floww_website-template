@@ -252,9 +252,9 @@ export const citationsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '3/3 identiske',
-        'Colosseum Tannlege': '3/3 identiske',
-        'Blid Tannlege': '3/3 identiske',
+        'Topp #1 i kartet': '3/3 identiske',
+        'Topp #2 i kartet': '3/3 identiske',
+        'Topp #3 i kartet': '3/3 identiske',
       },
     });
 
@@ -282,9 +282,9 @@ export const citationsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '6/6 kataloger',
-        'Colosseum Tannlege': '6/6 kataloger',
-        'Blid Tannlege': '5/6 kataloger',
+        'Topp #1 i kartet': '6/6 kataloger',
+        'Topp #2 i kartet': '6/6 kataloger',
+        'Topp #3 i kartet': '5/6 kataloger',
       },
     });
 
@@ -312,9 +312,9 @@ export const citationsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '0 avvik',
-        'Colosseum Tannlege': '0 avvik',
-        'Blid Tannlege': '0 avvik',
+        'Topp #1 i kartet': '0 avvik',
+        'Topp #2 i kartet': '0 avvik',
+        'Topp #3 i kartet': '0 avvik',
       },
     });
 
@@ -330,8 +330,8 @@ export const citationsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '6/6 kilder',
-        'Colosseum Tannlege': '6/6 kilder',
+        'Topp #1 i kartet': '6/6 kilder',
+        'Topp #2 i kartet': '6/6 kilder',
       },
     });
 
@@ -346,8 +346,8 @@ export const citationsModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 'Bing + Apple verifisert',
-        'Colosseum Tannlege': 'Bing + Apple verifisert',
+        'Topp #1 i kartet': 'Bing + Apple verifisert',
+        'Topp #2 i kartet': 'Bing + Apple verifisert',
       },
     });
 

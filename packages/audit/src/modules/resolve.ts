@@ -811,12 +811,32 @@ export const resolveModule: AuditModule = {
 
     // 1. Query Brreg if not loaded from fixture or Phase 1
     if (!brregEnhet) {
-      const brregResult = await fetchBrregEntity(
+      let hintOrgnr = ctx.business.orgnr;
+      let brregResult = await fetchBrregEntity(
         domain,
-        ctx.business.orgnr,
+        hintOrgnr,
         ctx.business.name,
         ctx.log
       );
+
+      // If not found yet (e.g. synthetic orgnr from bulk campaign), scrape real orgnr from website HTML footer
+      if (!brregResult.enhet) {
+        try {
+          const preflight = await preflightCheckDomain(domain);
+          if (preflight.extractedOrgnr && preflight.extractedOrgnr !== hintOrgnr) {
+            hintOrgnr = preflight.extractedOrgnr;
+            brregResult = await fetchBrregEntity(
+              domain,
+              hintOrgnr,
+              preflight.pageTitle || ctx.business.name,
+              ctx.log
+            );
+          }
+        } catch {
+          // Non-fatal fallback
+        }
+      }
+
       brregEnhet = brregResult.enhet;
       subUnitCount = brregResult.subUnitCount;
       subUnitNaces = brregResult.subUnitNaces;

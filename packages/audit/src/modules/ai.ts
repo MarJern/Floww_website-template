@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { AuditModule, AuditContext, ModuleResult, Finding } from '../types';
 import { generateAiQuestions, GeneratedAiQuestion } from '../ai/questions';
+import { resolveIndustryTerms } from '../utils/industry';
 
 export interface AiModelCheckResult {
   model: 'chatgpt' | 'gemini' | 'claude' | 'perplexity';
@@ -37,10 +38,9 @@ async function evaluateQuestionWithModel(
   companyName: string,
   domain: string,
   city: string,
+  citedSources: string[],
   log: (msg: string, meta?: unknown) => void
 ): Promise<AiModelCheckResult> {
-  const normalizedCompany = companyName.toLowerCase();
-
   // Deterministic simulation based on question intent and domain/model seed
   // Brand search (Q7, Q9) mentions the company; generic lists (Q1, Q2, Q10) mention competitors and sometimes the company
   const isBrandSearch = q.code === 'Q7' || q.code === 'Q9';
@@ -59,12 +59,10 @@ async function evaluateQuestionWithModel(
   const citedDomain = mentioned && pseudoRand > 0.5 ? domain : null;
 
   const competitorsPool = [
-    'Colosseum Tannlege',
-    'Oris Dental',
-    'Tannfeen Oslo',
-    'Majorstuen Tannklinikk',
-    'Tannlege Bislett',
-  ].filter((c) => !c.toLowerCase().includes(normalizedCompany));
+    'Topp #1 i kartet',
+    'Topp #2 i kartet',
+    'Topp #3 i kartet',
+  ];
 
   log(`Evaluated ${model} visibility for ${q.code}: "${q.question}" (mentioned=${mentioned})`);
 
@@ -77,7 +75,7 @@ async function evaluateQuestionWithModel(
     napCorrect,
     citedDomain,
     othersMentioned: competitorsPool.slice(0, 3),
-    citedSources: ['tannlegeforeningen.no', 'gulesider.no', 'legelisten.no'],
+    citedSources,
     snippet: mentioned
       ? `${companyName} er en etablert aktør i ${city} med gode kundevurderinger.`
       : `De mest anbefalte aktørene i ${city} er ${competitorsPool.slice(0, 2).join(' og ')}.`,
@@ -104,7 +102,8 @@ export const aiModule: AuditModule = {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
     const city = ctx.business.city || 'Oslo';
-    const industryName = ctx.business.naceName || 'tannlege';
+    const industry = resolveIndustryTerms(ctx.business);
+    const industryName = industry.primaryService;
     const timestamp = new Date().toISOString();
 
     ctx.log(`🤖 [AI] Starting LLM Visibility module for "${companyName}" (${domain})...`);
@@ -115,8 +114,8 @@ export const aiModule: AuditModule = {
       by: city,
       bydel: ctx.business.address ? ctx.business.address.split(' ')[0] : city,
       firmanavn: companyName,
-      hovedtjeneste: industryName,
-      spesialtjeneste: `akutt ${industryName}`,
+      hovedtjeneste: industry.serviceKeywords[1] || industryName,
+      spesialtjeneste: industry.serviceKeywords[2] || `beste ${industryName}`,
     });
 
     ctx.log(`Generated ${questions.length} question prompts (Q1 - Q10)`);
@@ -152,7 +151,15 @@ export const aiModule: AuditModule = {
 
       for (const q of questions) {
         for (const model of models) {
-          const res = await evaluateQuestionWithModel(model, q, companyName, domain, city, ctx.log);
+          const res = await evaluateQuestionWithModel(
+            model,
+            q,
+            companyName,
+            domain,
+            city,
+            industry.citedSources,
+            ctx.log
+          );
           results.push(res);
         }
       }
@@ -207,9 +214,9 @@ export const aiModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '90 % (9/10 søk)',
-        'Colosseum Tannlege': '80 % (8/10 søk)',
-        'Blid Tannlege': '70 % (7/10 søk)',
+        'Topp #1 i kartet': '90 % (9/10 søk)',
+        'Topp #2 i kartet': '80 % (8/10 søk)',
+        'Topp #3 i kartet': '70 % (7/10 søk)',
       },
     });
 
@@ -226,8 +233,8 @@ export const aiModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '65 % kildesitering',
-        'Colosseum Tannlege': '60 % kildesitering',
+        'Topp #1 i kartet': '65 % kildesitering',
+        'Topp #2 i kartet': '60 % kildesitering',
       },
     });
 
@@ -254,9 +261,9 @@ export const aiModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': '27 AI-omtaler',
-        'Colosseum Tannlege': '24 AI-omtaler',
-        'Blid Tannlege': '21 AI-omtaler',
+        'Topp #1 i kartet': '27 AI-omtaler',
+        'Topp #2 i kartet': '24 AI-omtaler',
+        'Topp #3 i kartet': '21 AI-omtaler',
       },
     });
 
@@ -274,6 +281,7 @@ export const aiModule: AuditModule = {
 
     // A015: Strukturerte data for AI (sameAs entity graph)
     const hasEntitySameAs = Boolean((summary as any).hasEntitySameAs);
+    const primarySchema = industry.schemaTypesLabel.split(',')[0]?.trim() || 'LocalBusiness';
     findings.push({
       factorCode: 'A015',
       status: hasEntitySameAs ? 'ok' : 'crit',
@@ -286,8 +294,8 @@ export const aiModule: AuditModule = {
         timestamp,
       },
       competitorValues: {
-        'Oslo Tannlegesenter': 'Komplett Dentist + sameAs + FAQPage',
-        'Blid Tannlege': 'Komplett Dentist + sameAs + FAQPage',
+        'Topp #1 i kartet': `Komplett ${primarySchema} + sameAs + FAQPage`,
+        'Topp #3 i kartet': `Komplett ${primarySchema} + sameAs + FAQPage`,
       },
     });
 

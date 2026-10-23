@@ -15,6 +15,7 @@ import {
   eq,
 } from '@floww/db';
 import { Finding, BusinessData, ProfileType } from '../types';
+import { resolveIndustryTerms } from '../utils/industry';
 import {
   calculateScores,
   FactorDefinition,
@@ -728,21 +729,23 @@ export async function buildReportFromJobId(
     }));
   } else {
     const city = (business.city || 'Oslo').toLowerCase();
+    const industry = resolveIndustryTerms(business);
+    const hasExactNaceBenchmark = Boolean(dbNace && dbNace.nace !== 'default');
     const serviceKeywords =
-      dbNace?.serviceKeywords && dbNace.serviceKeywords.length > 0
+      hasExactNaceBenchmark && dbNace?.serviceKeywords && dbNace.serviceKeywords.length > 0
         ? dbNace.serviceKeywords
-        : [business.naceName?.toLowerCase() || 'bedrift'];
-    const baseService = serviceKeywords[0] || 'tjenester';
+        : industry.serviceKeywords;
+    const baseService = serviceKeywords[0] || industry.primaryService || 'tjenester';
 
     keywords = [
       { keyword: `${baseService} ${city}`, volume: 1800, cpc: 58, mapRank: 0, orgRank: 5, hasAiOverview: true },
       { keyword: `beste ${baseService} ${city}`, volume: 640, cpc: 52, mapRank: 3, orgRank: 6, hasAiOverview: true },
-      { keyword: `akutt ${baseService} ${city}`, volume: 950, cpc: 74, mapRank: 0, orgRank: 7, hasAiOverview: true },
-      { keyword: `${serviceKeywords[1] || baseService} pris ${city}`, volume: 520, cpc: 46, mapRank: 0, orgRank: 8, hasAiOverview: true },
+      { keyword: `${serviceKeywords[1] || baseService} ${city}`, volume: 950, cpc: 74, mapRank: 0, orgRank: 7, hasAiOverview: true },
+      { keyword: `${serviceKeywords[2] || baseService} pris ${city}`, volume: 520, cpc: 46, mapRank: 0, orgRank: 8, hasAiOverview: true },
     ];
   }
 
-  // Extract Top 3 Competitors from SERP snapshot
+  // Extract Top 3 Competitors from SERP snapshot (Map Pack + Organic fallback)
   const snap = serpPayload?.snapshots?.[0];
   const competitors: CompetitorSummary[] = [];
   const mapPackList = Array.isArray(snap?.mapTop3)
@@ -750,9 +753,10 @@ export async function buildReportFromJobId(
     : Array.isArray(snap?.localPack)
       ? snap.localPack
       : [];
+  const orgList = Array.isArray(snap?.organicTop10) ? snap.organicTop10 : [];
+  const defaultScores = [88, 84, 81];
+
   if (mapPackList.length > 0) {
-    const orgList = Array.isArray(snap?.organicTop10) ? snap.organicTop10 : [];
-    const defaultScores = [88, 84, 81];
     mapPackList
       .filter((c: any) => !c.isTargetBusiness)
       .slice(0, 3)
@@ -761,13 +765,101 @@ export async function buildReportFromJobId(
           orgList.find((o: any) => !o.isTargetBusiness && o.rank === idx + 1) || orgList[idx];
         competitors.push({
           placesId: String(c.placesId || c.placeId || `comp_${idx + 1}`),
-          name: String(c.title || `Konkurrent #${idx + 1}`),
+          name: String(c.title || `Topp #${idx + 1} i kartet`),
           domain: c.domain ?? matchedOrg?.domain ?? null,
           rating: typeof c.rating === 'number' ? c.rating : 4.8,
-          reviewCount: typeof c.reviewsCount === 'number' ? c.reviewsCount : 250,
+          reviewCount: typeof c.reviewsCount === 'number' ? c.reviewsCount : 120,
           lightScore: defaultScores[idx] ?? 80,
         });
       });
+  }
+
+  // If fewer than 3 competitors in Map Pack, backfill from top organic SERP results
+  if (competitors.length < 3 && orgList.length > 0) {
+    const directoryDomains = [
+      'gulesider.no',
+      'proff.no',
+      '1881.no',
+      'finn.no',
+      'mittanbud.no',
+      'legelisten.no',
+      'byraguide.no',
+      'byråguide.no',
+      'clutch.co',
+      'sortlist.com',
+      'trustpilot.com',
+      'facebook.com',
+      'linkedin.com',
+      'instagram.com',
+      'wikipedia.org',
+      'brreg.no',
+    ];
+    for (const org of orgList) {
+      if (competitors.length >= 3) break;
+      if (org.isTargetBusiness) continue;
+      const cleanDom = String(org.domain || '').replace(/^www\./i, '').toLowerCase();
+      if (!cleanDom || directoryDomains.some((d) => cleanDom.includes(d))) continue;
+      if (competitors.some((c) => c.domain === cleanDom || c.name.toLowerCase().includes(cleanDom.split('.')[0]))) {
+        continue;
+      }
+      const cleanTitle =
+        String(org.title || cleanDom).split(/\s+[|\-–—:]\s+/)[0]?.trim() || cleanDom;
+      const idx = competitors.length;
+      competitors.push({
+        placesId: `org_${idx + 1}`,
+        name: cleanTitle.length <= 48 ? cleanTitle : cleanDom,
+        domain: cleanDom,
+        rating: 4.8,
+        reviewCount: 45 + (3 - idx) * 18,
+        lightScore: defaultScores[idx] ?? 80,
+      });
+    }
+  }
+
+  // Dynamically replace placeholder competitor slot names in all findings and AI summary
+  const comp1Name = competitors[0]?.name || 'Topp #1 i kartet';
+  const comp2Name = competitors[1]?.name || 'Topp #2 i kartet';
+  const comp3Name = competitors[2]?.name || 'Topp #3 i kartet';
+
+  const replaceCompName = (rawKey: string): string => {
+    if (rawKey === 'Topp #1 i kartet' || rawKey === 'Oslo Tannlegesenter') return comp1Name;
+    if (rawKey === 'Topp #2 i kartet' || rawKey === 'Colosseum Tannlege') return comp2Name;
+    if (rawKey === 'Topp #3 i kartet' || rawKey === 'Blid Tannlege') return comp3Name;
+    return rawKey;
+  };
+
+  for (const f of mappedFindings) {
+    if (f.competitorValues && typeof f.competitorValues === 'object') {
+      const remapped: Record<string, string | number | boolean> = {};
+      for (const [k, v] of Object.entries(f.competitorValues)) {
+        remapped[replaceCompName(k)] = v as string | number | boolean;
+      }
+      f.competitorValues = remapped;
+    }
+  }
+
+  if (aiPayload && typeof aiPayload === 'object') {
+    if (Array.isArray(aiPayload.topCompetitorsMentioned)) {
+      aiPayload.topCompetitorsMentioned = aiPayload.topCompetitorsMentioned.map((c: any) => ({
+        ...c,
+        name: replaceCompName(String(c.name || '')),
+      }));
+    }
+    if (Array.isArray(aiPayload.results)) {
+      aiPayload.results = aiPayload.results.map((r: any) => ({
+        ...r,
+        othersMentioned: Array.isArray(r.othersMentioned)
+          ? r.othersMentioned.map((m: string) => replaceCompName(m))
+          : [],
+        snippet:
+          typeof r.snippet === 'string'
+            ? r.snippet
+                .replace(/Topp #1 i kartet/g, comp1Name)
+                .replace(/Topp #2 i kartet/g, comp2Name)
+                .replace(/Topp #3 i kartet/g, comp3Name)
+            : r.snippet,
+      }));
+    }
   }
 
   const businessData: Partial<BusinessData> = {
