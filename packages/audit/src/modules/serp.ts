@@ -288,9 +288,12 @@ export const serpModule: AuditModule = {
   async run(ctx: AuditContext): Promise<ModuleResult> {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
-    const city = ctx.business.city || 'Oslo';
-    const industry = resolveIndustryTerms(ctx.business);
-    const primaryService = industry.primaryService.toLowerCase();
+    const industry = resolveIndustryTerms(ctx.business, {
+      resolve: ctx.raw('resolve'),
+      crawl: ctx.raw('crawl'),
+    });
+    const city = industry.cityFormatted;
+    const primaryService = (industry.serviceKeywords[0] || industry.primaryService).toLowerCase();
     const primaryKeyword = `${primaryService} ${city}`.trim();
     const timestamp = new Date().toISOString();
 

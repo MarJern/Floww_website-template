@@ -202,7 +202,10 @@ export const linksModule: AuditModule = {
   async run(ctx: AuditContext): Promise<ModuleResult> {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
-    const industry = resolveIndustryTerms(ctx.business);
+    const industry = resolveIndustryTerms(ctx.business, {
+      resolve: ctx.raw('resolve'),
+      crawl: ctx.raw('crawl'),
+    });
     const serviceKeywords = industry.serviceKeywords;
     const timestamp = new Date().toISOString();
 

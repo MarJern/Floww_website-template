@@ -188,8 +188,11 @@ export const mentionsModule: AuditModule = {
     const count = summary.totalMentions;
     const uniqueDomains = summary.uniqueDomainsCount;
     const editorialCount = summary.mentions.filter((m) => m.isEditorialOrNews).length;
-    const industry = resolveIndustryTerms(ctx.business);
-    const cityLabel = ctx.business.city || 'Oslo';
+    const industry = resolveIndustryTerms(ctx.business, {
+      resolve: ctx.raw('resolve'),
+      crawl: ctx.raw('crawl'),
+    });
+    const cityLabel = industry.cityFormatted;
 
     // L107: Synlighet på «Beste i byen»-lister og redaksjonelle kåringer
     const l107Status: 'ok' | 'warn' | 'crit' = editorialCount >= 2 ? 'ok' : editorialCount === 1 ? 'warn' : 'crit';

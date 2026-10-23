@@ -728,8 +728,11 @@ export async function buildReportFromJobId(
       hasAiOverview: Boolean(kw.hasAiOverview),
     }));
   } else {
-    const city = (business.city || 'Oslo').toLowerCase();
-    const industry = resolveIndustryTerms(business);
+    const industry = resolveIndustryTerms(business, {
+      resolve: rawMap.get('resolve'),
+      crawl: rawMap.get('crawl'),
+    });
+    const city = industry.cityFormatted.toLowerCase();
     const hasExactNaceBenchmark = Boolean(dbNace && dbNace.nace !== 'default');
     const serviceKeywords =
       hasExactNaceBenchmark && dbNace?.serviceKeywords && dbNace.serviceKeywords.length > 0

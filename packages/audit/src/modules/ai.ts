@@ -101,7 +101,10 @@ export const aiModule: AuditModule = {
   async run(ctx: AuditContext): Promise<ModuleResult> {
     const domain = (ctx.domain || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
     const companyName = ctx.business.name || domain.split('.')[0];
-    const industry = resolveIndustryTerms(ctx.business);
+    const industry = resolveIndustryTerms(ctx.business, {
+      resolve: ctx.raw('resolve'),
+      crawl: ctx.raw('crawl'),
+    });
     const city = industry.cityFormatted;
     const industryName = industry.primaryService;
     const timestamp = new Date().toISOString();
@@ -110,8 +113,8 @@ export const aiModule: AuditModule = {
 
     // 1. Generate the 10 standard question variations using broad city/borough labels (never street address!)
     const questions = generateAiQuestions({
-      tjeneste: industryName.toLowerCase(),
-      tjenesteFlertall: industry.pluralService.toLowerCase(),
+      tjeneste: industryName,
+      tjenesteFlertall: industry.pluralService,
       erIntetkjonn: industry.isNeuter,
       by: city,
       bydel: industry.areaLabel,

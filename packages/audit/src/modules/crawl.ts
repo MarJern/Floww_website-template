@@ -649,7 +649,10 @@ export const crawlModule: AuditModule = {
       },
     });
 
-    const industry = resolveIndustryTerms(ctx.business);
+    const industry = resolveIndustryTerms(ctx.business, {
+      resolve: ctx.raw('resolve'),
+      crawl: summary,
+    });
 
     // G011: Broken links (404)
     const brokenCount = summary.brokenLinks404Count;

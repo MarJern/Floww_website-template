@@ -9,7 +9,11 @@ import {
   BusinessData,
   ProfileType,
 } from '../types';
-import { formatNorwegianCity } from '../utils/industry';
+import {
+  formatNorwegianCity,
+  extractWebsiteSignalsFromHtml,
+  WebsiteServiceSignals,
+} from '../utils/industry';
 
 /**
  * Normalizes an input URL or domain string to a clean domain.
@@ -33,6 +37,7 @@ export interface PreflightCheckResult {
   finalUrl?: string;
   extractedOrgnr?: string;
   pageTitle?: string;
+  homepageSignals?: WebsiteServiceSignals;
 }
 
 export interface NaceBlacklistCheckResult {
@@ -197,6 +202,7 @@ export async function preflightCheckDomain(rawDomain: string): Promise<Preflight
       // Any HTTP status code (even 401/403 Cloudflare challenge/405/503) proves the web server is alive
       let extractedOrgnr: string | undefined;
       let pageTitle: string | undefined;
+      let homepageSignals: WebsiteServiceSignals | undefined;
 
       const contentType = res.headers.get('content-type') || '';
       if (res.ok && contentType.includes('text/html')) {
@@ -219,10 +225,8 @@ export async function preflightCheckDomain(rawDomain: string): Promise<Preflight
           }
 
           extractedOrgnr = extractNorwegianOrgnrFromHtml(text);
-          const titleMatch = text.match(/<title[^>]*>([^<]{1,120})<\/title>/i);
-          if (titleMatch?.[1]) {
-            pageTitle = titleMatch[1].trim();
-          }
+          homepageSignals = extractWebsiteSignalsFromHtml(text);
+          pageTitle = homepageSignals.pageTitle ?? undefined;
         } catch {
           // Ignore body read errors if headers already succeeded
         }
@@ -234,6 +238,7 @@ export async function preflightCheckDomain(rawDomain: string): Promise<Preflight
         finalUrl: res.url || url,
         extractedOrgnr,
         pageTitle,
+        homepageSignals,
       };
     } catch {
       // Try next URL variant
@@ -634,6 +639,7 @@ export interface PreFlightResolveResult {
   subUnitCount: number;
   subUnitNaces: string[];
   brregEnhet: BrregEnhet | null;
+  homepageSignals?: WebsiteServiceSignals;
 }
 
 /**
@@ -652,6 +658,7 @@ export async function runPreFlightAndBrregResolve(
   let subUnitNaces: string[] = [];
   let extractedOrgnr: string | undefined = options?.hintOrgnr;
   let pageTitle: string | undefined;
+  let homepageSignals: WebsiteServiceSignals | undefined;
 
   // Check if fixture exists when useFixtures is enabled
   let loadedFromFixture = false;
@@ -688,6 +695,7 @@ export async function runPreFlightAndBrregResolve(
       extractedOrgnr = preflight.extractedOrgnr;
     }
     pageTitle = preflight.pageTitle;
+    homepageSignals = preflight.homepageSignals;
   }
 
   // 2. Query Brreg (100% free API)
@@ -764,6 +772,7 @@ export async function runPreFlightAndBrregResolve(
     subUnitCount,
     subUnitNaces,
     brregEnhet,
+    homepageSignals,
   };
 }
 
@@ -803,7 +812,11 @@ export const resolveModule: AuditModule = {
       subUnitCount?: number;
       subUnitNaces?: string[];
       placeCandidate?: GooglePlaceCandidate | null;
+      homepageSignals?: WebsiteServiceSignals;
     }>('resolve');
+
+    let homepageSignals: WebsiteServiceSignals | undefined =
+      existingResolveRaw?.homepageSignals;
 
     if (!brregEnhet && existingResolveRaw?.brregEnhet) {
       brregEnhet = existingResolveRaw.brregEnhet;
@@ -825,6 +838,9 @@ export const resolveModule: AuditModule = {
       if (!brregResult.enhet) {
         try {
           const preflight = await preflightCheckDomain(domain);
+          if (preflight.homepageSignals) {
+            homepageSignals = preflight.homepageSignals;
+          }
           if (preflight.extractedOrgnr && preflight.extractedOrgnr !== hintOrgnr) {
             hintOrgnr = preflight.extractedOrgnr;
             brregResult = await fetchBrregEntity(
@@ -842,6 +858,18 @@ export const resolveModule: AuditModule = {
       brregEnhet = brregResult.enhet;
       subUnitCount = brregResult.subUnitCount;
       subUnitNaces = brregResult.subUnitNaces;
+    }
+
+    // Ensure homepageSignals are populated for Wave 2 keyword/service disambiguation
+    if (!homepageSignals && !ctx.useFixtures) {
+      try {
+        const preflight = await preflightCheckDomain(domain);
+        if (preflight.homepageSignals) {
+          homepageSignals = preflight.homepageSignals;
+        }
+      } catch {
+        // Non-fatal fallback
+      }
     }
 
     // Check NACE Blacklist BEFORE firing paid Google Places API (for self_serve scans)
@@ -1022,6 +1050,7 @@ export const resolveModule: AuditModule = {
       subUnitCount,
       subUnitNaces,
       placeCandidate,
+      homepageSignals,
       resolvedAt: timestamp,
     };
 
