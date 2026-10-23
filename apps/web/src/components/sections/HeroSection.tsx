@@ -27,12 +27,12 @@ export default function HeroSection({
         alt="Bakgrunnsbilde for Floww Media"
         fill
         sizes="100vw"
-        className="object-cover object-center opacity-35"
+        className="object-cover object-center opacity-25"
         priority
       />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-light/95 via-brand-light/85 to-brand-light/25" />
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-light/30 via-transparent to-brand-light/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-light via-brand-light/95 to-brand-light/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-light via-brand-light/50 to-transparent" />
 
       <div className="relative z-10 mx-auto max-w-5xl w-full px-4 sm:px-6 md:px-8">
         <div
@@ -54,7 +54,7 @@ export default function HeroSection({
             </TitleTag>
 
             {description && (
-              <p className="text-fluid-p-lg max-w-3xl text-brand-dark/85 text-pretty">
+              <p className="text-fluid-p-lg max-w-3xl text-brand-dark font-medium text-pretty">
                 {description}
               </p>
             )}
