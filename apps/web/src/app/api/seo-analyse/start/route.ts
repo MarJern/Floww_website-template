@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
           address: preResolve.address ?? null,
           postcode: preResolve.postcode ?? null,
           city: preResolve.city ?? null,
-          source: 'self_serve',
+          source: isAdmin ? 'bulk' : 'self_serve',
           profileType: 'lokal',
         })
         .returning();
@@ -201,6 +201,9 @@ export async function POST(request: NextRequest) {
       const updateFields: Record<string, unknown> = {
         updatedAt: new Date(),
       };
+      if (isAdmin) {
+        updateFields.source = 'bulk';
+      }
       if (preResolve.companyName && preResolve.companyName !== domain) {
         updateFields.name = preResolve.companyName;
       }

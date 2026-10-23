@@ -166,6 +166,7 @@ const LEAD_STATUS_OPTIONS: Array<{ value: LeadStatus; label: string; badgeClass:
 ];
 
 const NACE_PRESETS = [
+  { code: '', label: 'Automatisk fra Brreg / Ingen fast bransjekode (bruk domene-listen)' },
   { code: '86.230', label: '86.230 — Tannlegetjenester' },
   { code: '96.020', label: '96.020 — Hudpleie, skjønnhet & klinikker' },
   { code: '69.100', label: '69.100 — Juridisk tjenesteyting (Advokater)' },
@@ -193,10 +194,10 @@ export function AdminCommandCenterClient() {
   const [dismissingJobId, setDismissingJobId] = useState<string | null>(null);
   const [leadNotesDraft, setLeadNotesDraft] = useState<Record<string, string>>({});
 
-  const [campaignName, setCampaignName] = useState('Tannleger & Klinikker Oslo — Utvalgte');
-  const [campaignNace, setCampaignNace] = useState('86.230');
-  const [campaignPostcodes, setCampaignPostcodes] = useState('0159, 0255');
-  const [campaignDomains, setCampaignDomains] = useState('smilia.no\ncocoon.no');
+  const [campaignName, setCampaignName] = useState('Utvalgte bedrifter — Analyse');
+  const [campaignNace, setCampaignNace] = useState('');
+  const [campaignPostcodes, setCampaignPostcodes] = useState('');
+  const [campaignDomains, setCampaignDomains] = useState('flowwmedia.no');
   const [isRunningCampaign, setIsRunningCampaign] = useState(false);
   const [campaignMessage, setCampaignMessage] = useState<string | null>(null);
 
@@ -1257,7 +1258,7 @@ export function AdminCommandCenterClient() {
                       htmlFor="campaign-nace"
                       className="block text-micro uppercase tracking-wider text-brand-dark mb-1"
                     >
-                      NACE-bransjekode
+                      NACE-bransjekode (valgfritt)
                     </label>
                     <select
                       id="campaign-nace"
@@ -1266,7 +1267,7 @@ export function AdminCommandCenterClient() {
                       className="w-full px-3 py-2.5 rounded-sm border border-brand-dark/20 font-heading text-xs font-bold bg-brand-light text-brand-dark"
                     >
                       {NACE_PRESETS.map((n) => (
-                        <option key={n.code} value={n.code}>
+                        <option key={n.code || 'auto'} value={n.code}>
                           {n.label}
                         </option>
                       ))}

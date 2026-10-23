@@ -15,6 +15,7 @@ import { requireAdminAuth, getTrustedAppOrigin } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 interface CreateCampaignBody {
   name?: string;
@@ -140,7 +141,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => ({}))) as CreateCampaignBody;
     const campaignName = (body.name || '').trim() || `Bulk-kampanje ${new Date().toLocaleDateString('nb-NO')}`;
-    const nace = (body.nace || '').trim() || '86.230';
+    const explicitNace = (body.nace || '').trim();
     const createdBy = (body.createdBy || '').trim() || 'Simen';
 
     const postcodes: string[] = Array.isArray(body.postcodes)
@@ -165,16 +166,18 @@ export async function POST(request: NextRequest) {
       new Set(rawDomains.map(normalizeDomain).filter(Boolean))
     ).slice(0, 5);
 
+    const nace = explicitNace || (parsedDomains.length === 0 ? '86.230' : '');
+
     let targets: TargetCandidate[] = [];
     if (parsedDomains.length > 0) {
       targets = parsedDomains.map((domain) => ({
         domain,
-        nace,
-        postcode: postcodes[0] || '0150',
+        nace: explicitNace || undefined,
+        postcode: postcodes[0] || undefined,
         city: 'Oslo',
       }));
     } else {
-      targets = await discoverBrregCandidates(nace, postcodes);
+      targets = await discoverBrregCandidates(nace || '86.230', postcodes);
     }
 
     const db = getDb();
@@ -184,7 +187,7 @@ export async function POST(request: NextRequest) {
       .insert(campaigns)
       .values({
         name: campaignName,
-        nace,
+        nace: nace || null,
         postcodes,
         status: 'running',
         createdBy,
@@ -240,7 +243,7 @@ export async function POST(request: NextRequest) {
               orgnr,
               name: target.name || target.domain.toUpperCase(),
               domain: target.domain,
-              nace: target.nace || nace,
+              nace: target.nace || nace || null,
               postcode: target.postcode || '0150',
               city: target.city || 'Oslo',
               source: 'bulk',
