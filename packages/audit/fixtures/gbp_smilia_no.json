@@ -1,0 +1,69 @@
+{
+  "id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+  "displayName": {
+    "text": "Smilia Tannklinikk Majorstuen",
+    "languageCode": "no"
+  },
+  "formattedAddress": "Sørkedalsveien 11G, 0369 Oslo, Norge",
+  "location": {
+    "latitude": 59.9304,
+    "longitude": 10.7138
+  },
+  "primaryType": "dentist",
+  "types": ["dentist", "health", "point_of_interest", "establishment"],
+  "nationalPhoneNumber": "22 60 00 00",
+  "internationalPhoneNumber": "+47 22 60 00 00",
+  "websiteUri": "https://www.smilia.no/",
+  "regularOpeningHours": {
+    "openNow": true,
+    "periods": [
+      { "open": { "day": 1, "hour": 8, "minute": 0 }, "close": { "day": 1, "hour": 17, "minute": 0 } },
+      { "open": { "day": 2, "hour": 8, "minute": 0 }, "close": { "day": 2, "hour": 17, "minute": 0 } },
+      { "open": { "day": 3, "hour": 8, "minute": 0 }, "close": { "day": 3, "minute": 0, "hour": 17 } },
+      { "open": { "day": 4, "hour": 8, "minute": 0 }, "close": { "day": 4, "hour": 17, "minute": 0 } },
+      { "open": { "day": 5, "hour": 8, "minute": 0 }, "close": { "day": 5, "hour": 15, "minute": 0 } }
+    ],
+    "weekdayDescriptions": [
+      "Mandag: 08:00–17:00",
+      "Tirsdag: 08:00–17:00",
+      "Onsdag: 08:00–17:00",
+      "Torsdag: 08:00–17:00",
+      "Fredag: 08:00–15:00",
+      "Lørdag: Stengt",
+      "Søndag: Stengt"
+    ]
+  },
+  "rating": 4.8,
+  "userRatingCount": 38,
+  "ownerReplyRatePct": 0,
+  "hasServicesMenu": false,
+  "reviews": [
+    {
+      "publishTime": "2026-08-29T10:14:00Z",
+      "rating": 5,
+      "relativePublishTimeDescription": "6 uker siden"
+    },
+    {
+      "publishTime": "2026-06-14T14:30:00Z",
+      "rating": 5,
+      "relativePublishTimeDescription": "4 måneder siden"
+    },
+    {
+      "publishTime": "2026-03-11T09:20:00Z",
+      "rating": 4,
+      "relativePublishTimeDescription": "7 måneder siden"
+    },
+    {
+      "publishTime": "2025-12-18T16:05:00Z",
+      "rating": 5,
+      "relativePublishTimeDescription": "10 måneder siden"
+    },
+    {
+      "publishTime": "2025-10-05T11:45:00Z",
+      "rating": 5,
+      "relativePublishTimeDescription": "ett år siden"
+    }
+  ],
+  "photosCount": 7,
+  "businessStatus": "OPERATIONAL"
+}

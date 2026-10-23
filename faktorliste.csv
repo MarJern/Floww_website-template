@@ -1,0 +1,455 @@
+Synlighetsrapporten: faktorliste (fase 0)
+"Versjon 13. oktober 2026. Bygget for Floww Media. Dette er listen Antigravity skal implementere, én rad per faktor."
+
+STRUKTUR
+"Del 1 Lokalt søk: alle 187 faktorer fra Whitesparks Local Search Ranking Factors 2026 (publisert 6. nov 2025, 47 eksperter). Hver faktor har score for kart/Maps, lokal organisk og AI-søk, slik ekspertene rangerte dem. Kolonnen 'Målbart' sier om riggen kan observere faktoren utenfra. Vekt regnes automatisk fra gruppevekt × score, kun for aktive faktorer."
+"Del 2 Generell SEO: teknisk, arkitektur, innhold/on-page og off-page for hele nettstedet. Egen liste, vektet av Simen, ikke fra Whitespark."
+"Del 3 AI-synlighet: måleprotokollen (spørsmål stilt til ChatGPT, Gemini, Perplexity og Google AI Mode) pluss faktorene som avgjør om en virksomhet nevnes. De 25 øverste AI-faktorene fra Whitespark er merket med rank."
+"Del 4 Betalt og økonomi: hvordan organisk grunnmur gjør Google Ads billigere (Quality Score, merkevaresøk, utvidelser) og regnemodellen for hva tapt synlighet koster i kroner."
+"Negative faktorer: Whitesparks 42 negative faktorer, med hva riggen kan fange opp."
+"Gruppevekter: ekspertenes gruppevekting 2026. NACE-ordbok: søkeord, kategorier, konverteringsrate og kundeverdi per bransje."
+
+HVORDAN BRUKE ARKET
+"Gule celler er dine å fylle ut eller justere. Blå tekst er inndata, svart tekst er formler. Sett 'Aktiv' til 0 for å ta en faktor ut av scoringen uten å slette raden. Vektene i del 1 oppdateres automatisk."
+"'Målbart' har fire verdier: Ja (observeres automatisk med god presisjon), Delvis (observeres, men grovt eller via scraping av profilsiden), Kontekst (vises i rapporten, men scores ikke, fordi det ikke kan påvirkes), Nei (intern Google-data, subjektivt, eller tekst vi ikke lagrer)."
+Terskler er startverdier. De skal justeres etter at riggen er kjørt på de tre testvirksomhetene (fase 1) og sammenlignet med dine manuelle rapporter.
+
+"SCORINGMODELL, DEL 1"
+"Vekt_kart(faktor) = Gruppevekt_kart(gruppe) × Score_kart(faktor) / Σ Score_kart over aktive faktorer i samme gruppe. Tilsvarende for organisk og AI. Status per faktor: ok = 100 %, advarsel = 50 %, kritisk = 0 % av vekten. Score per del = Σ (vekt × status) / Σ vekt, skalert 0-100. Konkurrentene i kartet kjøres gjennom samme formel i lett versjon, så kunden ser sitt tall mot deres."
+"Grupper uten målbare faktorer (Atferd, Personalisering) faller ut av nevneren. Det betyr at rapporten dekker den delen av algoritmen som kan observeres utenfra, og sier det eksplisitt: «Bygget på Local Search Ranking Factors 2026. Vi måler de X faktorene som kan observeres utenfra.»"
+
+KILDER
+"Whitespark, Local Search Ranking Factors 2026: https://whitespark.ca/local-search-ranking-factors/ (plain text: https://whitespark.ca/llms.txt)"
+"Gruppevekter: Whitesparks graf for 2026, gjengitt av Advice Local og Emulent. Tall som ikke er avlest fra grafen er merket 'sjekk'."
+"Core Web Vitals-terskler: web.dev/vitals (LCP 2,5 s, INP 200 ms, CLS 0,1)."
+"Klikkandel per posisjon (del 4): bransjeestimater, se kommentar i cellene. Skal erstattes av egne tall fra Search Console på Floww-kunder når de finnes."
+
+REGLER SOM GJELDER ALLE MODULER
+"Places-data lagres med fetched_at og slettes etter 30 dager. Anmeldelsestekst lagres aldri, bare antall, snitt og datoer. Crawl respekterer robots.txt, maks 1-2 forespørsler/sek, egen user-agent. Kartplassering hentes via SERP-API med lisens, aldri ved å skrape Google selv. Scraping av den offentlige GBP-profilsiden (merket SCR i kilde) er en gråsone: start uten, legg til hvis Places API ikke gir nok."
+
+Gruppe,Vekt kart/Maps 2026,Vekt lokal organisk 2026,Vekt AI-søk 2026,Vekt kart 2023 (PDF-en),Kommentar
+Google-profil,32%,7%,12%,32%,Åtte av topp ti kartfaktorer ligger her
+Anmeldelser,20%,6%,16%,16%,"Opp fra 16 % i 2023, eneste gruppe med klar økning"
+On-page,15%,33%,24%,19%,Tyngst for organisk og for AI
+Atferd,9%,,,8%,Ikke målbart utenfra. Faller ut av nevneren. Organisk/AI: sjekk Whitesparks graf
+Lenker,8%,,,11%,"Organisk anslått ~25 %, AI ~15 %: sjekk Whitesparks graf før koden låses"
+Kataloger,6%,,,7%,3 av topp 5 AI-faktorer er katalogfaktorer. AI anslått ~12 %: sjekk graf
+Personalisering,6%,,,6%,Ikke målbart. Ingen faktorer i listen
+Sosialt,4%,,,,Ny gruppe i 2026
+Sum,100%,46%,52%,99%,
+,,,,,
+"Kilde: Whitespark LSRF 2026, graf 'Local Search Ranking Factor group weighting for 2026'. Kart-tall avlest fra grafen (32/20/15/9/8/6/6/4). Organisk og AI: kun de tre øverste gruppene er publisert i tekstform (organisk: on-page 33, GBP 7, anmeldelser 6; AI: on-page 24, anmeldelser 16, GBP 12). Gule celler må avleses fra grafen på whitespark.ca før fase 1.",,,,,
+
+Kode,Whitespark-faktor (2026),Norsk navn,Gruppe,Rank kart,Score kart,Rank organisk,Score organisk,Rank AI,Score AI,Målbart,Aktiv (1/0),Datakilde,Regel (hva som sjekkes),OK,Advarsel,Kritisk,Vekt kart,Vekt organisk,Vekt AI,Notat
+L001,Primary GBP Category,Primærkategori på Google-profilen,Google-profil,1,227,85,75,34,112,Ja,1,Places API (New),primaryType sammenlignes med forventet kategori i NACE-ordboken,Eksakt match,Beslektet kategori (f.eks. 'Tannlegekontor' vs 'Tannlege'),Feil kategori eller mangler,"2,28%","0,42%","0,83%",
+L002,Proximity of Address to the Point of Search (Searcher-Business Distance),Avstand fra søkepunkt (grid),Google-profil,2,225,41,120,52,97,Kontekst,0,DataForSEO SERP (geo),"Kartplassering måles fra 9 punkter (3x3 grid) rundt adressen. Vises som kart, scores ikke (kan ikke påvirkes)",,,,"0,00%","0,00%","0,00%",
+L003,Keywords in GBP Business Title,Kategoriord i profilnavnet,Google-profil,3,223,83,76,21,127,Ja,1,Places API (New),"Profilnavn inneholder hovedsøkeord fra NACE-ordboken (f.eks. 'tannlege'). Rapporteres som observasjon, aldri som anbefaling om keyword-stuffing",Inneholder naturlig,,"Inneholder ikke (informasjon, ikke feil)","2,24%","0,43%","0,95%",
+L004,Physical Address in City of Search,Adresse i søkebyen,Google-profil,4,213,30,135,16,132,Ja,1,Places API (New) + Brreg API,Poststed i Places og Brreg = målby/bydel for søkene,Match,Nabokommune,Annen by,"2,14%","0,76%","0,98%",
+L005,Business is Open at Time of Search (Business Hours),Åpningstider dekker søketidene,Google-profil,5,189,129,38,104,57,Ja,1,Places API (New),regularOpeningHours: timer per uke og dekning man-fre 08-16,≥ 40 t/uke og dekker 08-16,25-39 t/uke eller hull på dagtid,Ingen åpningstider registrert,"1,90%","0,22%","0,42%",
+L006,High Numerical Google Ratings (e.g. 4-5),Gjennomsnittlig stjernerating,Anmeldelser,6,181,81,77,8,146,Ja,1,Places API (New),rating sammenlignes med terskel og med topp 3 i kartet,"≥ 4,6","4,0-4,5","< 4,0 eller ingen","2,52%","0,49%","1,61%",
+L007,Address Is Showing on GBP (Not SAB),Adresse vises på profilen,Google-profil,7,176,95,63,54,96,Ja,1,Places API (New),formattedAddress finnes og er ikke skjult (ikke SAB),Vises,,Skjult,"1,77%","0,36%","0,71%",
+L008,Additional GBP Categories,Tilleggskategorier,Google-profil,8,173,106,53,89,69,Ja,1,Places API (New),Antall types utover primaryType som finnes i NACE-ordbokens liste over relevante kategorier,≥ 3 relevante,1-2,0,"1,74%","0,30%","0,51%",
+L009,Quantity of Native Google Reviews (w/text),Antall Google-anmeldelser,Anmeldelser,9,170,104,55,35,112,Ja,1,Places API (New),userRatingCount vs snittet av topp 3 i kartet på hovedsøket,≥ snitt av topp 3,50-99 % av snittet,< 50 % av snittet,"2,37%","0,35%","1,24%",
+L010,Proper Placement of the Map Pin,Kartnålen står på adressen,Google-profil,10,165,126,40,103,57,Ja,1,Places API (New) + geokoding av Brreg-adresse,Avstand mellom Places-koordinat og geokodet Brreg-adresse,< 50 m,50-200 m,> 200 m,"1,66%","0,23%","0,42%",
+L011,Recency of Reviews,Dato på nyeste anmeldelse,Anmeldelser,11,164,105,55,62,89,Ja,1,Places API (New),"Nyeste av de 5 anmeldelsene API-et returnerer. Kun dato lagres, aldri tekst",≤ 30 dager,31-90 dager,> 90 dager,"2,28%","0,35%","0,98%",
+L012,Proximity of Address to Centroid,Avstand til bydelssentrum,Google-profil,12,157,94,64,91,65,Kontekst,0,Geokoding,"Avstand fra adresse til bydelens/byens sentroide. Vises som kontekst, scores ikke",,,,"0,00%","0,00%","0,00%",
+L013,Click-Through Rate from Local Pack/Maps Search Results,,Atferd,13,156,93,67,130,45,Nei,0,,,,,,"0,00%","0,00%","0,00%","Intern Google-data. Proxy: rating, antall anmeldelser og bilder, som måles separat"
+L014,Sustained Influx of Reviews Over Time (rather than bursts),Jevnt tilsig av anmeldelser,Anmeldelser,14,154,111,50,70,81,Delvis,1,Places API (New),"Estimert anmeldelser per måned fra datoene på de 5 nyeste. Grov, men nok til å flagge stillstand",≥ 4/mnd,1-3/mnd,< 1/mnd,"2,14%","0,32%","0,89%",
+L015,HTML NAP Matching GBP NAP,"Navn, adresse, telefon på nettsiden = Google-profilen",Google-profil,15,153,55,107,68,86,Ja,1,Egen crawler + Places API (New),"NAP i footer/kontaktside normaliseres (tlf uten mellomrom, gate forkortet) og sammenlignes med Places",Identisk,Kun formatavvik,"Ulik adresse/telefon, eller NAP mangler","1,54%","0,61%","0,64%",
+L016,Completeness of GBP,Utfyllingsgrad på profilen,Google-profil,16,147,103,56,67,86,Ja,1,Places API (New) + Scrape av offentlig GBP-profilside (Playwright),"Andel utfylte felt: tlf, nettsted, åpningstider, beskrivelse, ≥ 10 bilder, ≥ 3 kategorier, tjenester, attributter",≥ 90 %,70-89 %,< 70 %,"1,48%","0,32%","0,64%",
+L017,Keywords in GBP Landing Page Title Tag,Tjeneste + sted i title på landingssiden,On-page,17,146,4,179,28,120,Ja,1,Egen crawler,Title på URL-en profilen lenker til inneholder hovedtjeneste og by/bydel,Begge,Én av dem,Ingen eller tom title,"0,66%","1,22%","0,81%",
+L018,Geographic (City/Neighborhood) Keyword Relevance of Content,By/bydel nevnt i innholdet,On-page,18,142,2,190,6,153,Ja,1,Egen crawler,Antall by- og bydelsnevnelser på landingsside og tjenestesider (fra stedsliste for Oslo),På landingsside og ≥ 80 % av tjenestesidene,Kun landingsside,Ingen,"0,64%","1,30%","1,04%",
+L019,Removal of spam listings through spam fighting,,Google-profil,19,137,134,35,105,57,Nei,0,,,,,,"0,00%","0,00%","0,00%","Handling, ikke tilstand. Kan ikke måles utenfra"
+L020,"Keywords in GBP Landing Page Headings (H1, H2, etc)",Tjeneste + sted i overskrifter,On-page,20,135,8,169,24,124,Ja,1,Egen crawler,H1/H2 på landingssiden inneholder hovedtjeneste og sted,Begge i H1 eller H2,Én av dem,Ingen eller mangler H1,"0,61%","1,15%","0,84%",
+L021,Proper Hours Set on GBP,Åpningstider er satt,Google-profil,21,134,142,31,109,56,Ja,1,Places API (New),regularOpeningHours finnes for alle dager,Alle dager satt,Noen dager mangler,Ingen,"1,35%","0,18%","0,42%",
+L022,Presence of GBP Predefined Services,Google-foreslåtte tjenester er lagt inn,Google-profil,22,134,145,31,127,45,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Tjenester-fanen på profilsiden inneholder minst én av Googles forhåndsdefinerte tjenester for kategorien,≥ 5,1-4,0,"1,35%","0,18%","0,33%",
+L023,Volume of Searches for Business Name,Søkevolum på firmanavnet,Atferd,23,133,35,129,65,89,Ja,1,DataForSEO Keywords,Månedlig volum på firmanavn (og vanlige stavemåter) vs topp 3 i kartet,≥ snitt av topp 3,25-99 %,< 25 % eller 0,"9,00%","0,00%","0,00%",
+L024,Dedicated Page for Each Service,Egen side per tjeneste,On-page,24,132,1,210,2,170,Ja,1,Egen crawler,For hvert tjenesteord i NACE-ordboken: finnes en side der title/H1 matcher,≥ 80 % dekning,50-79 %,< 50 % (typisk: én samleside 'Tjenester'),"0,59%","1,43%","1,15%",
+L025,Quality/Authority of Inbound Links to GBP Landing Page URL,Styrke på lenker til landingssiden,Lenker,25,127,29,136,69,84,Ja,1,DataForSEO Backlinks,Page rank / antall henvisende domener til landingssiden vs topp 3,≥ snitt av topp 3,50-99 %,< 50 %,"0,46%","0,00%","0,00%",
+L026,Quantity of Inbound Links to GBP Landing Page URL from Locally-Relevant Domains,Lokale lenker til landingssiden,Lenker,26,126,36,128,66,88,Delvis,1,DataForSEO Backlinks,"Henvisende domener med .no og lokale termer (oslo, bydelsnavn) i domene/tittel",≥ 5,1-4,0,"0,46%","0,00%","0,00%",
+L027,Quantity of Inbound Links to Domain from Locally-Relevant Domains,Lokale lenker til domenet,Lenker,27,125,13,167,30,118,Delvis,1,DataForSEO Backlinks,"Som over, for hele domenet",≥ 10,3-9,< 3,"0,46%","0,00%","0,00%",
+L028,"Consistency of Citations on Primary Search Engines (Google Maps, Bing Maps, Apple Maps)",Samsvar Google/Bing/Apple Maps,Kataloger,28,124,71,93,31,116,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",NAP på Bing Places og Apple Maps sammenlignes med Google,Alle tre identiske,Formatavvik eller mangler på én,Ulik NAP eller mangler på to,"0,54%","0,00%","0,00%",
+L029,Verified GBP,Profilen er verifisert,Google-profil,29,123,110,50,113,53,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Profilsiden viser ikke 'Eier du denne virksomheten?',Verifisert,,Ikke gjort krav på,"1,24%","0,28%","0,39%",
+L030,Keywords in GBP Custom Service Titles,Søkeord i egendefinerte tjenester,Google-profil,30,122,132,36,111,55,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Tjenestetitler på profilen matcher NACE-ordboken,≥ 5 treff,1-4,0,"1,23%","0,20%","0,41%",
+L031,Quality/Authority of Inbound Links to Domain,Domenestyrke,Lenker,31,122,3,187,29,119,Ja,1,DataForSEO Backlinks,Domain rank og henvisende domener vs topp 3 i kartet,≥ snitt av topp 3,50-99 %,< 50 %,"0,45%","0,00%","0,00%",
+L032,Quantity of Inbound Links to Landing Page URL from Industry-Relevant Domains,Bransjelenker til landingssiden,Lenker,32,122,22,148,37,108,Delvis,1,DataForSEO Backlinks,"Henvisende domener som matcher bransjeliste per NACE (foreninger, bransjekataloger, fagmedier)",≥ 3,1-2,0,"0,45%","0,00%","0,00%",
+L033,"Quantity of Engagement Signals on GBP (scrolling through listing, clicking on sections, reacting to reviews, etc)",,Anmeldelser,33,120,135,35,164,26,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern Google-data
+L034,Keywords in GBP Services,Søkeord i tjenestelisten,Google-profil,34,118,133,35,117,50,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),"Som 'Keywords in GBP Custom Service Titles', samlet",≥ 5,1-4,0,"1,19%","0,20%","0,37%",
+L035,Website's Degree of Focus on a Specific Niche,Nettstedet er spisset mot én bransje,On-page,35,118,9,169,9,138,Delvis,1,Egen crawler,Andel sider der title/H1 inneholder ord fra NACE-ordboken,≥ 70 %,40-69 %,< 40 %,"0,53%","1,15%","0,94%",
+L036,Keywords in Native Google Reviews,Tjenesteord i anmeldelser,Anmeldelser,36,117,107,53,53,97,Delvis,1,Places API (New),"Treff på NACE-ordbok i de 5 nyeste anmeldelsene, telles i minnet og forkastes. Tekst lagres aldri",≥ 3 av 5,1-2,0,"1,63%","0,34%","1,07%",
+L037,Topical (Product/Service) Keyword Relevance Across Entire Website,Tjenesteord dekket på tvers av nettstedet,On-page,37,117,7,172,18,132,Ja,1,Egen crawler,Andel av NACE-ordbokens tjenesteord som finnes i title/H1/H2 på minst én side,≥ 80 %,50-79 %,< 50 %,"0,53%","1,17%","0,90%",
+L038,Quantity of Native Google Ratings (no text),Antall vurderinger uten tekst,Anmeldelser,38,116,130,37,80,75,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),"Total minus med tekst, fra profilsiden",,,,"1,61%","0,24%","0,83%",
+L039,Quantity of Inbound Links to Domain from Industry-Relevant Domains,Bransjelenker til domenet,Lenker,39,114,5,175,23,125,Delvis,1,DataForSEO Backlinks,"Som for landingssiden, hele domenet",≥ 5,1-4,0,"0,42%","0,00%","0,00%",
+L040,In-store visits tracked by Android or Google Maps Mobile app location detection,,Atferd,40,113,122,43,163,27,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern Google-data
+L041,Quantity of Requests for Driving Directions From GBP,,Atferd,41,113,152,28,178,20,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern Google-data (krever eiertilgang)
+L042,Positive Sentiment in Review Text,,Anmeldelser,42,112,98,61,22,126,Nei,0,,,,,,"0,00%","0,00%","0,00%","Krever lagring/analyse av anmeldelsestekst, som riggen ikke gjør"
+L043,Quantity of Reviews with Photos,,Anmeldelser,43,111,125,41,94,63,Nei,0,,,,,,"0,00%","0,00%","0,00%","Ikke i API, krever dypskrape av anmeldelser"
+L044,Internal Links TO GBP Landing Page from Other Pages of Website,Interne lenker inn til landingssiden,On-page,44,110,39,123,96,63,Ja,1,Egen crawler,Antall interne sider som lenker til landingssiden (utenom meny/footer),≥ 10,3-9,< 3,"0,50%","0,84%","0,43%",
+L045,"Photo & Video Quality (resolution, clarity, not stock, etc)",,Google-profil,45,108,116,47,119,48,Nei,0,,,,,,"0,00%","0,00%","0,00%",Subjektiv vurdering
+L046,Keywords in Anchor Text of Inbound Links to GBP Landing Page URL,Søkeord i ankertekst til landingssiden,Lenker,46,108,38,124,83,75,Ja,1,DataForSEO Backlinks,Andel ankertekster med tjeneste- eller stedsord,≥ 20 %,5-19 %,< 5 %,"0,39%","0,00%","0,00%",
+L047,Internal Linking Across Entire Website,Intern lenking på nettstedet,On-page,47,107,6,174,46,103,Ja,1,Egen crawler,Snitt interne lenker per side (brødtekst) og antall foreldreløse sider,≥ 5/side og 0 foreldreløse,2-4/side eller ≤ 3 foreldreløse,< 2/side eller > 3 foreldreløse,"0,48%","1,19%","0,70%",
+L048,Presence of GBP Custom Services,Egendefinerte tjenester lagt inn,Google-profil,48,106,148,29,120,48,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Tjenester-fanen har tjenester utover Googles forslag,≥ 3,1-2,0,"1,07%","0,16%","0,36%",
+L049,Quality/Authority of Structured Citations,Oppføring i de viktige norske katalogene,Kataloger,49,105,62,99,26,123,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","Finnes på 1881, Gule Sider, Proff, Facebook, Apple Maps, Bing Places",Alle 6,4-5,≤ 3,"0,46%","0,00%","0,00%",
+L050,Reference to Location Specific Entities on GBP Landing Page,Lokale stedsnavn på landingssiden,On-page,50,104,45,116,57,95,Delvis,1,Egen crawler,"Nevnelser av bydeler, nabolag, t-banestasjoner, kjente steder (stedsliste for Oslo)",≥ 3 ulike,1-2,0,"0,47%","0,79%","0,64%",
+L051,Keywords in Anchor Text of Internal Links,Beskrivende intern ankertekst,On-page,51,103,19,154,51,98,Ja,1,Egen crawler,"Andel interne lenker med tjenesteord i ankerteksten (ikke 'les mer', 'her')",≥ 50 %,25-49 %,< 25 %,"0,46%","1,05%","0,66%",
+L052,Quantity of Inbound Links to GBP Landing Page URL,Antall lenker til landingssiden,Lenker,52,103,43,119,75,79,Ja,1,DataForSEO Backlinks,Henvisende domener til landingssiden,≥ 20,5-19,< 5,"0,38%","0,00%","0,00%",
+L053,Keywords in Title Tags Across Entire Website,Søkeord i titler på hele nettstedet,On-page,53,102,11,167,32,115,Ja,1,Egen crawler,"Andel sider med tjenesteord i title, pluss duplikate/tomme titler",≥ 80 % og 0 duplikater,50-79 % eller noen duplikater,< 50 % eller mange duplikater/tomme,"0,46%","1,14%","0,78%",
+L054,Website Uses HTTPS by default,HTTPS,On-page,54,102,18,154,71,81,Ja,1,Egen crawler,"http:// omdirigerer til https://, gyldig sertifikat, ingen mixed content",OK,Mixed content,Ingen HTTPS eller ugyldig sertifikat,"0,46%","1,05%","0,55%",
+L055,Domain Authority of Website,Domain rank,Lenker,55,102,24,146,58,95,Ja,1,DataForSEO Backlinks,Domain rank vs topp 3 i kartet,≥ snitt,50-99 %,< 50 %,"0,37%","0,00%","0,00%",
+L056,Quantity of Inbound Links to Domain,Antall henvisende domener,Lenker,56,102,23,147,48,99,Ja,1,DataForSEO Backlinks,Unike henvisende domener vs topp 3,≥ snitt,50-99 %,< 50 %,"0,37%","0,00%","0,00%",
+L057,Quantity of Clicks to Call Business From GBP,,Atferd,57,102,160,26,180,19,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern Google-data
+L058,Age of GBP (Original Creation Date),,Google-profil,58,101,120,44,141,40,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke synlig utenfra
+L059,"High Numerical Ratings by Authority Reviewers (e.g. Yelp Elite, Google Local Guides, etc)",,Anmeldelser,59,101,100,59,74,79,Nei,0,,,,,,"0,00%","0,00%","0,00%",Krever anmelderdata
+L060,Mobile-friendly/Responsive Website,Mobilvennlig,On-page,60,101,16,154,95,63,Ja,1,PageSpeed Insights API,"PSI mobil: viewport satt, tekst lesbar, trykkflater OK",Alle bestått,1 avvik,≥ 2 avvik,"0,46%","1,05%","0,43%",
+L061,Diversity of Inbound Links to Domain,Variasjon i lenkekilder,Lenker,61,101,12,167,64,89,Ja,1,DataForSEO Backlinks,"Henvisende domener / totale lenker, og andel fra ett enkelt domene",Ingen kilde > 30 %,Én kilde 30-60 %,Én kilde > 60 %,"0,37%","0,00%","0,00%",
+L062,Diversity of Inbound Links to GBP Landing Page URL,Variasjon i lenker til landingssiden,Lenker,62,101,46,116,88,70,Ja,1,DataForSEO Backlinks,"Som over, for landingssiden",,,,"0,37%","0,00%","0,00%",
+L063,"Consistency of Citations on Key Sites (Yellowpages, Yelp, D&B, CityGrid)",NAP-samsvar i norske nøkkelkataloger,Kataloger,63,101,79,80,49,99,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","NAP på 1881, Gule Sider, Proff og Facebook sammenlignes normalisert med Brreg og Google",Alle identiske,Formatavvik,Ulik adresse/telefon på ≥ 1,"0,44%","0,00%","0,00%",
+L064,"Quality/Authority of Unstructured Citations (Newspaper Articles, Blog Posts, Gov Sites, Industry Associations)",Omtaler i medier og foreninger,Kataloger,64,101,37,125,4,160,Delvis,1,DataForSEO SERP (geo),"Søk på firmanavn: treff på nyhetsmedier, offentlige sider, bransjeforeninger (ekskl. kataloger og egen side)",≥ 3,1-2,0,"0,44%","0,00%","0,00%",
+L065,Keywords in Anchor Text of Inbound Links to Domain,Søkeord i ankertekst til domenet,Lenker,65,100,10,169,50,98,Ja,1,DataForSEO Backlinks,Andel ankertekster med tjeneste-/stedsord,≥ 20 %,5-19 %,< 5 %,"0,37%","0,00%","0,00%",
+L066,Prominence on Key Industry-Relevant Domains,Oppført på bransjens viktigste nettsteder,Kataloger,66,100,28,138,3,167,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places) + bransjeliste per NACE","Finnes på bransjespesifikke kataloger (f.eks. tannlege: Tannlegeforeningen, Helsenorge, Legelisten)",Alle i listen,Mangler 1,Mangler ≥ 2,"0,44%","0,00%","0,00%",
+L067,Proper Category Associations on Aggregators and Tier 1 Citation Sources,Riktig bransje i katalogene,Kataloger,67,100,72,92,36,111,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Bransjekategori på 1881/Gule Sider/Proff matcher NACE,Alle riktige,1 avvik,≥ 2 avvik eller mangler,"0,44%","0,00%","0,00%",
+L068,Page Authority of GBP Landing Page URL,Sidestyrke på landingssiden,Lenker,68,99,56,106,99,60,Ja,1,DataForSEO Backlinks,Page rank vs topp 3,≥ snitt,50-99 %,< 50 %,"0,36%","0,00%","0,00%",
+L069,Quantity of Citations from Locally-Relevant Domains,Oppføringer på lokale nettsteder,Kataloger,69,99,49,114,25,124,Delvis,1,DataForSEO SERP (geo),"Treff på firmanavn på lokale sider (bydelsaviser, lokale foreninger, kommune)",≥ 3,1-2,0,"0,43%","0,00%","0,00%",
+L070,Presence of Products Added to GBP via Merchant Center,,Google-profil,70,98,127,40,125,45,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke relevant for tjenestebedrifter
+L071,Keywords in Domain Name,Tjenesteord i domenenavnet,On-page,71,97,32,132,72,80,Ja,0,Domene,"Domenet inneholder tjeneste- eller stedsord. Kun observasjon, vekt lav",,,,"0,00%","0,00%","0,00%",
+L072,Volume of Quality Content on Service Pages,Innholdsmengde på tjenestesider,On-page,72,97,17,154,27,122,Ja,1,Egen crawler,Ord per tjenesteside (brødtekst),≥ 400,150-399,< 150 (tynn side),"0,44%","1,05%","0,83%",
+L073,Authority of Third-Party Sites on Which Reviews are Present,Anmeldelser på andre sterke sider,Anmeldelser,73,96,58,105,5,156,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","Anmeldelser på Facebook, Trustpilot og bransjesider (Legelisten, Mittanbud o.l. per NACE)",≥ 2 kilder,1,0,"1,34%","0,67%","1,72%",
+L074,Photos Match Target Keywords,,Google-profil,74,95,123,41,112,53,Nei,0,,,,,,"0,00%","0,00%","0,00%",Subjektiv
+L075,Quantity of Citations from Industry-Relevant Domains,Oppføringer på bransjesider,Kataloger,75,95,40,121,15,133,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Antall bransjekataloger som har virksomheten,≥ 3,1-2,0,"0,41%","0,00%","0,00%",
+L076,Quanitity of User-Uploaded Photos,,Google-profil,76,94,143,31,135,42,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L077,GBP Popular Times Section Shows Business as Busy,,Atferd,77,93,167,24,179,19,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L078,Relevancy of Photos to Categories,,Google-profil,78,93,137,33,133,43,Nei,0,,,,,,"0,00%","0,00%","0,00%",Subjektiv
+L079,Diversity of Anchor Text to GBP Landing Page URL,Variasjon i ankertekst til landingssiden,Lenker,79,93,52,111,86,71,Ja,1,DataForSEO Backlinks,Andel av lenker med samme ankertekst,Ingen > 40 %,40-70 %,> 70 %,"0,34%","0,00%","0,00%",
+L080,Sustained Influx of Links Over Time (rather than bursts),Jevnt tilsig av lenker,Lenker,80,93,34,132,85,75,Ja,1,DataForSEO Backlinks,Nye henvisende domener siste 12 mnd fordelt per måned,≥ 1/mnd jevnt,Sporadisk,0 siste 6 mnd,"0,34%","0,00%","0,00%",
+L081,User Added Attributes in GBP,,Google-profil,81,92,150,28,137,41,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L082,Freshness of Content on GBP Landing Page,"Sist oppdatert, landingsside",On-page,82,92,53,110,77,78,Delvis,1,Egen crawler,"dateModified i schema, Last-Modified eller sitemap lastmod",≤ 90 dager,91-365,> 365 eller ukjent,"0,41%","0,75%","0,53%",
+L083,"Keywords in Headings (H1, H2, etc) Across Entire Website",Søkeord i overskrifter på hele nettstedet,On-page,83,92,15,155,38,107,Ja,1,Egen crawler,"Andel sider med tjenesteord i H1/H2, og sider uten H1","≥ 80 %, alle har H1",50-79 %,< 50 % eller mange uten H1,"0,41%","1,06%","0,73%",
+L084,Business Title in Anchor Text of Inbound Links to Domain,Firmanavn i ankertekst,Lenker,84,92,33,132,45,103,Ja,1,DataForSEO Backlinks,Andel ankertekster som er firmanavnet,20-70 %,,< 5 %,"0,34%","0,00%","0,00%",
+L085,"Consistency of Citations on Data Aggregators (Infogroup, Localeze, Foursquare/Factual)",Samsvar i de norske datakildene,Kataloger,85,91,90,72,56,96,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","Norge har ikke US-aggregatorer. Nærmeste: Brreg og 1881, som mater andre kataloger",Brreg = 1881 = Google,Formatavvik,Ulik,"0,40%","0,00%","0,00%",
+L086,"Presence of ""Identifies as"" Attributes on GBP",,Google-profil,86,90,168,24,140,40,Nei,0,,,,,,"0,00%","0,00%","0,00%","Ikke i API, lite relevant i Norge"
+L087,Quantity of Reviews with Videos,,Anmeldelser,87,90,141,32,114,53,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L088,Volume of Quality Content on Entire Website,Innholdsmengde på nettstedet,On-page,88,90,14,161,14,133,Ja,1,Egen crawler,Antall sider med ≥ 300 ord brødtekst,≥ 15,6-14,≤ 5,"0,41%","1,10%","0,90%",
+L089,Recency of Photos Uploaded to GBP,,Google-profil,89,89,154,27,151,33,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L090,Keywords in GBP Products,,Google-profil,90,89,124,41,131,44,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke relevant for tjenestebedrifter
+L091,Enhancement/Completeness of Citations,Utfyllingsgrad i katalogene,Kataloger,91,88,92,70,59,95,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","Andel felt utfylt (åpningstider, nettsted, beskrivelse, bilde) på 1881/Gule Sider/Proff",≥ 80 %,50-79 %,< 50 %,"0,38%","0,00%","0,00%",
+L092,Keywords in GBP Landing Page URL,Søkeord i landingssidens URL,On-page,92,87,64,95,87,70,Ja,1,Egen crawler,URL-sti inneholder tjeneste/sted (forsiden er OK),,,,"0,39%","0,65%","0,47%",
+L093,Business Title in Anchor Text of Inbound Links to GBP Landing Page URL,Firmanavn i ankertekst til landingssiden,Lenker,93,87,65,95,78,76,Ja,1,DataForSEO Backlinks,Som for domenet,,,,"0,32%","0,00%","0,00%",
+L094,Relevancy of Videos to Categories,,Google-profil,94,86,139,32,138,41,Nei,0,,,,,,"0,00%","0,00%","0,00%",Subjektiv
+L095,Loadtime of GBP Landing Page,"Lastetid, landingsside",On-page,95,85,51,111,98,60,Ja,1,PageSpeed Insights API,Mobil LCP på landingssiden,"≤ 2,5 s","2,5-4,0 s","> 4,0 s","0,38%","0,76%","0,41%",
+L096,Quantity of Photos on GBP,Antall bilder på profilen,Google-profil,96,84,151,28,146,37,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Bildeteller på profilsiden,≥ 20,5-19,< 5,"0,84%","0,16%","0,28%",
+L097,Diversity of Anchor Text to Domain,Variasjon i ankertekst til domenet,Lenker,97,84,27,138,73,80,Ja,1,DataForSEO Backlinks,Som for landingssiden,,,,"0,31%","0,00%","0,00%",
+L098,Age of Business (GBP Opening Date),Virksomhetens alder,Google-profil,98,82,115,47,124,45,Kontekst,0,Brreg API,"Stiftelsesdato fra Brreg. Vises, scores ikke",,,,"0,00%","0,00%","0,00%",
+L099,Recency of Videos Uploaded to GBP,,Google-profil,99,82,159,26,157,30,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L100,"Quantity of Reviews by Authority Reviewers (e.g. Yelp Elite, Google Local Guides, etc)",,Anmeldelser,100,82,109,51,90,66,Nei,0,,,,,,"0,00%","0,00%","0,00%",Krever anmelderdata
+L101,Volume of Content on GBP Landing Page,Innholdsmengde på landingssiden,On-page,101,82,67,94,63,89,Ja,1,Egen crawler,Ord i brødtekst,≥ 500,200-499,< 200,"0,37%","0,64%","0,60%",
+L102,Length of Dwell Time on GBP,,Atferd,102,81,172,24,183,17,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern Google-data
+L103,Keywords in Text Surrounding Links to GBP Landing Page,Kontekst rundt innlenker,Lenker,103,80,70,93,84,75,Delvis,1,DataForSEO Backlinks,Tjenesteord i tekst rundt lenken (hvis API gir snippet),,,,"0,29%","0,00%","0,00%",
+L104,Presence of Crowd Sourced Attributes,,Google-profil,104,79,169,24,150,33,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L105,Diversity of Third-Party Sites on Which Reviews are Present,Antall anmeldelsesplattformer,Anmeldelser,105,79,59,102,11,136,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Google + Facebook + Trustpilot + bransjeside,≥ 3,2,1,"1,10%","0,65%","1,50%",
+L106,Quantity of Reviews on Industry-Specific Sites,Anmeldelser på bransjeside,Anmeldelser,106,79,63,97,19,130,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places) (per NACE)",Antall anmeldelser på bransjesiden (f.eks. Legelisten for helse),≥ 10,1-9,0,"1,10%","0,62%","1,43%",
+L107,Presence of Business on Expert Curated Best of and Similar Lists,Nevnt i 'beste i Oslo'-lister,Kataloger,107,79,48,115,1,179,Ja,1,DataForSEO SERP (geo) + WebFetch,Topp 10 organisk på 'beste {tjeneste} oslo' hentes; sjekker om firmanavnet står i listesidene,På ≥ 2 lister,På 1,Ingen (men konkurrentene er det),"0,34%","0,00%","0,00%",
+L108,Freshness of Content Across Entire Website,"Sist oppdatert, hele nettstedet",On-page,108,78,25,141,41,104,Delvis,1,Egen crawler,Median lastmod/dateModified over alle sider,≤ 180 dager,181-540,> 540 eller ukjent,"0,35%","0,96%","0,71%",
+L109,Internal Links FROM GBP Landing Page to Other Pages of Website,Lenker ut fra landingssiden,On-page,109,78,68,94,116,52,Ja,1,Egen crawler,Antall interne lenker fra landingssiden til tjenestesider,≥ 5,2-4,< 2,"0,35%","0,64%","0,35%",
+L110,"Quantity of Structured Citations (IYPs, Data Aggregators)",Antall katalogoppføringer,Kataloger,110,78,80,79,40,106,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Antall kataloger fra listen der virksomheten finnes,≥ 6,3-5,< 3,"0,34%","0,00%","0,00%",
+L111,Freshness of Content on Service Pages,"Sist oppdatert, tjenestesider",On-page,111,77,31,132,61,91,Delvis,1,Egen crawler,Som for landingssiden,,,,"0,35%","0,90%","0,62%",
+L112,Local Area Code on GBP,Lokalt telefonnummer,Google-profil,112,76,128,39,121,47,Delvis,1,Places API (New),"Fasttelefon med Oslo-prefiks (2x) eller mobil. Svakt signal i Norge, vekt lav",,,,"0,76%","0,22%","0,35%",
+L113,Frequency of Owner/Manager Activity,,On-page,113,76,174,23,155,32,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke synlig utenfra
+L114,High Numerical Third-Party Ratings (e.g. 4-5),Rating på andre plattformer,Anmeldelser,114,76,87,74,17,132,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Facebook/Trustpilot/bransjeside-rating,"≥ 4,5","4,0-4,4","< 4,0","1,06%","0,47%","1,46%",
+L115,"Quantity of Unstructured Citations (Newspaper Articles, Blog Posts)",Antall omtaler,Kataloger,115,76,57,106,7,147,Delvis,1,DataForSEO SERP (geo),Treff på firmanavn utenfor kataloger og egen side,≥ 5,1-4,0,"0,33%","0,00%","0,00%",
+L116,Keywords in Text Surrounding Links to Domain,Kontekst rundt innlenker til domenet,Lenker,116,75,42,120,60,93,Delvis,1,DataForSEO Backlinks,Som for landingssiden,,,,"0,27%","0,00%","0,00%",
+L117,Presence of Place Topics Matching Keywords,Place topics på profilen,On-page,117,74,121,44,123,46,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Emneord Google har generert fra anmeldelser matcher NACE-ordboken,,,,"0,33%","0,30%","0,31%",
+L118,NAP in Schema/JSON-LD on GBP Landing Page URL,LocalBusiness-schema med NAP,On-page,118,73,76,85,81,75,Ja,1,Egen crawler,"JSON-LD av typen LocalBusiness/Dentist/Plumber med name, address, telephone som matcher Google",Finnes og matcher,"Finnes, avvik",Mangler,"0,33%","0,58%","0,51%",
+L119,"Quantity of Third-Party Traditional Reviews (e.g. Yelp, TripAdvisor, Yellowpages, etc)",Anmeldelser på Facebook/Trustpilot,Anmeldelser,119,72,66,94,20,129,Delvis,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Sum anmeldelser utenfor Google,≥ 20,5-19,< 5,"1,00%","0,60%","1,42%",
+L120,Length of Dwell Time on GBP Landing Page,,Atferd,120,72,82,77,167,24,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L121,Quantity of Videos on GBP,,Google-profil,121,71,153,27,152,32,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L122,Presence of Owner Responses to Most Reviews,Eier svarer på anmeldelser,Anmeldelser,122,70,156,27,149,34,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),"Andel av synlige anmeldelser med eiersvar (telles, tekst lagres ikke)",≥ 80 %,30-79 %,< 30 %,"0,97%","0,17%","0,38%",
+L123,Consistency of Citations on Other Citation Sources,NAP-samsvar i øvrige kataloger,Kataloger,123,70,102,58,76,79,Ja,1,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Øvrige kataloger i listen,,,,"0,31%","0,00%","0,00%",
+L124,Keywords in GBP Service Descriptions,Søkeord i tjenestebeskrivelser,Google-profil,124,69,165,25,139,41,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,69%","0,14%","0,31%",
+L125,Embedded Google Map for Location on GBP Landing Page,Innebygd kart på landingssiden,On-page,125,69,91,70,143,40,Ja,1,Egen crawler,iframe/script mot google.com/maps på kontakt- eller landingsside,Finnes,,Mangler,"0,31%","0,48%","0,27%",
+L126,Quantity of Unlinked Brand Mentions,Omtaler uten lenke,Kataloger,126,69,73,91,12,135,Delvis,1,DataForSEO SERP (geo),Treff på firmanavn på sider som ikke lenker til domenet,≥ 5,1-4,0,"0,30%","0,00%","0,00%",
+L127,"Scannable Content Structure Across Entire Website (headings, bullet points, images, etc)",Skannbar struktur,On-page,127,68,26,139,10,137,Ja,1,Egen crawler,"Per side: overskrifter per 300 ord, lister, bilder. Lange avsnitt uten overskrift flagges",≥ 1 overskrift/300 ord,1 per 300-600,Tekstvegger,"0,31%","0,95%","0,93%",
+L128,Click-Through Rate from Organic Search Results,,Atferd,128,68,20,150,118,49,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data (Search Console)
+L129,Keywords in Third-Party Reviews,,Anmeldelser,129,67,88,72,33,114,Nei,0,,,,,,"0,00%","0,00%","0,00%",Tekst lagres ikke
+L130,Quantity of Reviews with Answers to Review Questions,,Anmeldelser,130,67,131,37,100,59,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L131,Social Profiles Are Linked to GBP,Sosiale profiler koblet til profilen,Sosialt,131,66,146,30,136,42,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Profilsiden viser lenker til Facebook/Instagram,,,,"1,50%","0,00%","0,00%",
+L132,Proper Site Architecture Organized Into Topic Areas,Arkitektur i temaområder,On-page,132,66,21,148,39,107,Ja,1,Egen crawler,"URL-struktur med mapper per tjenesteområde, hub-sider som lenker til undersider, klikkdybde ≤ 3",Mapper + hub + dybde ≤ 3,Flat struktur,Dybde > 3 eller kaotisk,"0,30%","1,01%","0,73%",
+L133,BBB Accredited,,Kataloger,133,66,97,62,79,76,Nei,0,,,,,,"0,00%","0,00%","0,00%",Finnes ikke i Norge
+L134,Presence of FAQs on GBP Landing Page,FAQ på landingssiden,On-page,134,65,74,89,55,96,Ja,1,Egen crawler,FAQPage-schema eller spørsmålsoverskrifter,Finnes,,Mangler,"0,29%","0,61%","0,65%",
+L135,Keywords in Text Surrounding Unlinked Brand Mentions,,Kataloger,135,65,75,88,47,103,Nei,0,,,,,,"0,00%","0,00%","0,00%",For upresist å måle
+L136,Presence of Products Added to GBP via NMX,,Google-profil,136,64,140,32,147,37,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke relevant for tjenester
+L137,Loadtime of Pages Across Entire Website,"Lastetid, hele nettstedet",On-page,137,64,44,118,97,62,Ja,1,PageSpeed Insights API,Mobil LCP på landingsside + 3 tjenestesider,"Alle ≤ 2,5 s",Én over,"≥ 2 over 4,0 s","0,29%","0,80%","0,42%",
+L138,Quantity of Bookings Through Google Booking Partners,,Atferd,138,64,138,33,177,20,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L139,Number of Bookings Through GBP Booking Feature,,Atferd,139,63,180,20,187,13,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L140,"Quantity of Third-Party Unstructured Reviews (e.g. blogs, newspapers, magazines)",Omtaler i blogger/medier,Anmeldelser,140,63,50,113,13,133,Delvis,1,DataForSEO SERP (geo),Som 'Quantity of Unstructured Citations',,,,"0,88%","0,72%","1,47%",
+L141,Presence of FAQs on Service Pages,FAQ på tjenestesider,On-page,141,61,60,100,43,103,Ja,1,Egen crawler,Andel tjenestesider med FAQ,≥ 50 %,1-49 %,0,"0,27%","0,68%","0,70%",
+L142,Comprehensive Google Q&A Section with Owner-Seeded FAQs,Spørsmål og svar på profilen,Google-profil,142,60,171,24,126,45,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Antall Q&A på profilsiden,≥ 5,1-4,0,"0,60%","0,14%","0,33%",
+L143,Keywords in URLs Across Entire Website,Lesbare URL-er,On-page,143,60,61,99,93,64,Ja,1,Egen crawler,Andel URL-er med ord (ikke ?id=123),≥ 90 %,60-89 %,< 60 %,"0,27%","0,68%","0,43%",
+L144,Matching Google Account Domain to GBP Landing Page Domain,,On-page,144,58,155,27,172,22,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke synlig utenfra
+L145,Quantity of Clicks on WhatsApp / SMS,,Atferd,145,57,178,21,185,15,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L146,Presence of Appointment URL,Bestill-time-lenke på profilen,Google-profil,146,56,162,25,170,22,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Profilsiden har 'Bestill time'-knapp,Finnes,,Mangler (viktig for tannlege/kiropraktor),"0,56%","0,14%","0,16%",
+L147,Presence of Social Media Updates on GBP,,Sosialt,147,56,157,27,159,29,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L148,Frequency of Google Posts/Updates,Innlegg på profilen,Google-profil,148,55,186,13,173,21,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Dato på nyeste innlegg,≤ 30 dager,31-180,Ingen eller > 180,"0,55%","0,07%","0,16%",
+L149,Presence of 360 Tours / Immersive View,,Google-profil,149,55,170,24,181,18,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L150,Keywords in GBP Landing Page Meta Description,Meta description på landingssiden,On-page,150,55,112,50,106,57,Ja,1,Egen crawler,"Finnes, unik, inneholder tjeneste/sted",,,,"0,25%","0,34%","0,39%",
+L151,Sustained Output of Content Over Time (rather than bursts),Jevn publisering,On-page,151,55,54,108,82,75,Delvis,1,Egen crawler,Fordeling av lastmod/dateModified per kvartal,,,,"0,25%","0,74%","0,51%",
+L152,Setting Service Areas in GBP,Serviceområder satt,Google-profil,152,54,161,25,158,29,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),"Relevant for håndverkere (rørlegger, elektriker)",,,,"0,54%","0,14%","0,22%",
+L153,Quanitity of Reactions to Photos/Videos,,Atferd,153,54,182,19,168,23,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L154,Keywords in Google Q&A,Søkeord i Q&A,Google-profil,154,54,164,25,144,39,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,54%","0,14%","0,29%",
+L155,Keywords in Image ALT attributes on GBP Landing Page,ALT-tekst på landingssiden,On-page,155,54,89,72,134,43,Ja,1,Egen crawler,Andel bilder med ALT,≥ 90 %,50-89 %,< 50 %,"0,24%","0,49%","0,29%",
+L156,"Quantity of Engagement Signals on Website (scrolling pages, clicking on things, etc)",,Atferd,156,54,47,116,145,38,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L157,Quantity of Social Media Users Mentioning The Business,,Sosialt,157,53,77,81,42,104,Nei,0,,,,,,"0,00%","0,00%","0,00%",Krever sosiale API-er
+L158,GBP Booking Feature is Enabled,Booking aktivert,Google-profil,158,51,175,22,169,23,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,51%","0,12%","0,17%",
+L159,Quantity of Reactions to Reviews,,Anmeldelser,159,50,181,20,166,24,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke i API
+L160,Keywords in Google Posts/Updates,Søkeord i innlegg,Google-profil,160,49,177,21,160,28,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,49%","0,12%","0,21%",
+L161,Website Content Marked Up in Schema,Strukturerte data på nettstedet,On-page,161,49,69,93,44,103,Ja,1,Egen crawler,"Gyldig JSON-LD: LocalBusiness(+undertype), Service, FAQPage, BreadcrumbList",LocalBusiness + ≥ 2 andre,Kun LocalBusiness,Ingen eller ugyldig,"0,22%","0,63%","0,70%",
+L162,In-store visits tracked by third-party beacon or location detection technology,,Atferd,162,49,149,29,175,21,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L163,Quantity of Products on GBP,,Google-profil,163,47,144,31,153,32,Nei,0,,,,,,"0,00%","0,00%","0,00%",Ikke relevant for tjenester
+L164,"Presence of Visible Keyword Text on Photos (overlay, not metadata)",,Google-profil,164,46,163,25,161,27,Nei,0,,,,,,"0,00%","0,00%","0,00%",Krever bildeanalyse
+L165,Quantity of Transactions Identified Through Credit Card Partners,,Atferd,165,45,166,25,184,16,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L166,Quantity of Questions Asked in Google Q&A,Antall spørsmål i Q&A,Google-profil,166,44,179,20,154,32,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,44%","0,11%","0,24%",
+L167,Recency of Posts on Social Profiles,Nyeste innlegg på Facebook/Instagram,Sosialt,167,44,108,53,92,65,Delvis,1,Offentlig profil-crawl,Dato på nyeste innlegg,≤ 30 dager,31-180,> 180,"1,00%","0,00%","0,00%",
+L168,Quantity of Google Posts/Updates,Antall innlegg,Google-profil,168,43,187,12,171,22,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),,,,,"0,43%","0,07%","0,16%",
+L169,Keywords in Image ALT attributes Across Entire Website,ALT-tekst på hele nettstedet,Google-profil,169,43,84,76,128,45,Ja,1,Egen crawler,Andel bilder med ALT,≥ 90 %,50-89 %,< 50 %,"0,43%","0,43%","0,33%",
+L170,Keywords in Image Filenames on GBP Landing Page,"Filnavn på bilder, landingsside",On-page,170,43,101,58,156,31,Ja,1,Egen crawler,Andel bilder med beskrivende filnavn (ikke IMG_1234),,,,"0,19%","0,40%","0,21%",
+L171,Keywords in GBP Description,Profilbeskrivelse,Google-profil,171,41,158,26,115,52,Delvis,1,Scrape av offentlig GBP-profilside (Playwright),Beskrivelse finnes og nevner tjeneste + sted,Finnes med begge,Finnes,Mangler,"0,41%","0,15%","0,39%",
+L172,Engagement on Social Profiles,,Sosialt,172,40,99,60,102,58,Nei,0,,,,,,"0,00%","0,00%","0,00%",Krever sosiale API-er
+L173,Quality of Posts on Social Profiles,,Sosialt,173,38,114,48,107,57,Nei,0,,,,,,"0,00%","0,00%","0,00%",Subjektiv
+L174,Whatsapp/SMS is Enabled,,Google-profil,174,37,184,16,182,17,Nei,0,,,,,,"0,00%","0,00%","0,00%","Ikke i API, lite brukt i Norge"
+L175,Keywords in Image Filenames Across Entire Website,"Filnavn på bilder, hele nettstedet",On-page,175,34,96,62,148,35,Ja,1,Egen crawler,,,,,"0,15%","0,42%","0,24%",
+L176,Linking Out to Authority Topically Relevant Sites,Utgående lenker til autoriteter,Lenker,176,34,86,75,122,47,Ja,1,Egen crawler,"Antall eksterne lenker til relevante kilder (helsenorge, forening, Lovdata)",,,,"0,12%","0,00%","0,00%",
+L177,Sum of Transactions Identified Through Credit Card Partners,,Atferd,177,34,173,24,186,14,Nei,0,,,,,,"0,00%","0,00%","0,00%",Intern data
+L178,Frequency of Posts on Social Profiles,"Publiseringsfrekvens, sosialt",Sosialt,178,34,113,48,110,56,Delvis,1,Offentlig profil-crawl,,,,,"0,77%","0,00%","0,00%",
+L179,Keywords in Meta Descriptions Across Entire Website,Meta descriptions på hele nettstedet,On-page,179,33,118,46,129,45,Ja,1,Egen crawler,Andel sider med unik meta description,≥ 90 %,50-89 %,< 50 %,"0,15%","0,31%","0,31%",
+L180,Quantity of Posts on Social Profiles,"Antall innlegg, sosialt",Sosialt,180,32,117,47,108,57,Delvis,1,Offentlig profil-crawl,,,,,"0,73%","0,00%","0,00%",
+L181,Presence of Keywords in Image Metadata Fields,,On-page,181,30,147,29,165,25,Nei,0,,,,,,"0,00%","0,00%","0,00%","Myte ifølge undersøkelsen, ikke verdt å måle"
+L182,Keywords in Owner Responses to Reviews,,Anmeldelser,182,28,185,16,142,40,Nei,0,,,,,,"0,00%","0,00%","0,00%",Tekst lagres ikke
+L183,Presence of XML Sitemap,XML-sitemap,On-page,183,28,78,80,101,58,Ja,1,Egen crawler,"sitemap.xml finnes, gyldig, referert i robots.txt, lastmod satt",Finnes med lastmod,Finnes uten lastmod,Mangler,"0,13%","0,55%","0,39%",
+L184,Length of Title Tag,Lengde på title,On-page,184,26,119,46,162,27,Ja,0,Egen crawler,"Måles, men undersøkelsen kaller det en myte. Vekt 0, vises kun hvis title er tom eller > 200 tegn",,,,"0,00%","0,00%","0,00%",
+L185,"Participation in Adwords, Adwords Express, Hotel Finder, or other paid Google products",Annonserer i Google,Google-profil,185,26,176,22,176,21,Kontekst,0,DataForSEO SERP (geo),"Om virksomheten vises som annonse på hovedsøkene. Brukes i del 4, scores ikke her",,,,"0,00%","0,00%","0,00%",
+L186,Follower Count on Social Profiles,"Følgere, sosialt",Sosialt,186,25,136,35,132,44,Delvis,0,Offentlig profil-crawl,"Myte ifølge undersøkelsen, vekt 0",,,,"0,00%","0,00%","0,00%",
+L187,Presence of Geo-tagged Photos,,Google-profil,187,23,183,16,174,21,Nei,0,,,,,,"0,00%","0,00%","0,00%",Myte ifølge undersøkelsen
+,,,,,,,,,,,,,,,,,,,,
+,"Sum vekter (kart/organisk/AI). Er < 100 % fordi grupper uten målbare faktorer, og gule gruppevekter som ikke er satt, faller ut.",,,,,,,,,,,,,,,,"94,0%","46,0%","52,0%",
+,Antall faktorer per målbarhet,,,,,,,,,,,,,,,,,,,
+,Ja,74,,,,,,,,,,,,,,,,,,
+,Delvis,53,,,,,,,,,,,,,,,,,,
+,Kontekst,4,,,,,,,,,,,,,,,,,,
+,Nei,56,,,,,,,,,,,,,,,,,,
+,Aktive i scoringen,124,,,,,,,,,,,,,,,,,,
+
+Kode,Undergruppe,Faktor,Datakilde,Regel (hva som sjekkes),OK,Advarsel,Kritisk,Vekt i undergruppen (1-10),Undergruppevekt,Vekt i del 2,Notat
+G001,Teknisk,"LCP (Largest Contentful Paint), mobil",PageSpeed Insights API,"Felt-data (CrUX) hvis finnes, ellers lab. Landingsside + 3 tjenestesider","≤ 2,5 s","2,5-4,0 s","> 4,0 s",10,30%,"3,00%",web.dev/vitals
+G002,Teknisk,"INP (Interaction to Next Paint), mobil",PageSpeed Insights API,Felt-data hvis finnes,≤ 200 ms,200-500 ms,> 500 ms,7,30%,"2,10%",
+G003,Teknisk,CLS (Cumulative Layout Shift),PageSpeed Insights API,,"≤ 0,1","0,1-0,25","> 0,25",6,30%,"1,80%",
+G004,Teknisk,"Performance-score, mobil",PageSpeed Insights API,"Lighthouse-score, snitt over testede sider",≥ 80,50-79,< 50,6,30%,"1,80%",Vises som tall kunden kjenner igjen
+G005,Teknisk,Mobilvennlighet,PageSpeed Insights API,"Viewport, lesbar tekst, trykkflater",Alle bestått,1 avvik,≥ 2 avvik,8,30%,"2,40%",
+G006,Teknisk,HTTPS og omdirigering,Egen crawler,"http→https, www/ikke-www konsolidert til én, gyldig sertifikat, ingen mixed content",OK,Mixed content eller to versjoner svarer 200,Ingen HTTPS,8,30%,"2,40%",
+G007,Teknisk,Indekserbarhet,Egen crawler,"robots.txt blokkerer ikke viktige stier, ingen noindex på tjenestesider, ingen X-Robots-Tag-feil",OK,Én viktig side noindex,Tjenestesider eller forside blokkert,10,30%,"3,00%",
+G008,Teknisk,Indekserte sider vs crawlet,DataForSEO SERP (geo) (site:-søk) + Egen crawler,Antall indekserte vs antall crawlbare sider,80-120 %,50-79 % eller > 150 %,< 50 % eller > 300 % (søppelsider),6,30%,"1,80%",
+G009,Teknisk,XML-sitemap,Egen crawler,"Finnes, gyldig, i robots.txt, lastmod satt, ingen 404/noindex-URL-er i den",OK,Mangler lastmod eller noen døde URL-er,Mangler,4,30%,"1,20%",
+G010,Teknisk,Canonical,Egen crawler,"Hver side har self-referencing canonical eller korrekt peker, ingen canonical til 404",OK,Mangler på noen,Feil canonical (peker bort fra tjenestesider),5,30%,"1,50%",
+G011,Teknisk,Ødelagte lenker og 404,Egen crawler,"Interne lenker som gir 404/500, ødelagte bilder",0,1-5,> 5,5,30%,"1,50%",
+G012,Teknisk,Omdirigeringskjeder,Egen crawler,"Interne lenker som går via ≥ 2 redirects, 302 der det skal være 301",0,1-5,> 5,3,30%,"0,90%",
+G013,Teknisk,"Strukturerte data, gyldighet",Egen crawler,"JSON-LD parser uten feil, påkrevde felt finnes (validert mot schema.org)",Gyldig,Advarsler,Feil eller ingen,6,30%,"1,80%",
+G014,Teknisk,Bildeoptimalisering,PageSpeed Insights API,"Moderne format (WebP/AVIF), riktig størrelse, lazy loading",OK,1-2 avvik,Bilder > 500 KB på landingsside,4,30%,"1,20%",
+G015,Teknisk,Tilgjengelighet (WCAG-grunnlag),PageSpeed Insights API,Lighthouse accessibility-score. Relevant i Norge pga. tilgjengelighetsforskriften,≥ 90,70-89,< 70,3,30%,"0,90%","Selges som risiko, ikke SEO"
+G016,Teknisk,Server-respons (TTFB),PageSpeed Insights API,"Time to first byte, landingsside","≤ 0,8 s","0,8-1,8 s","> 1,8 s",4,30%,"1,20%",
+G017,Teknisk,Crawlbarhet for AI-roboter,Egen crawler,"robots.txt tillater GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Bingbot. Brukes også i del 3",Alle tillatt,Én blokkert,Flere blokkert,5,30%,"1,50%",Mange WordPress-sikkerhetsplugins blokkerer disse uten at eier vet det
+G018,Arkitektur,Tjeneste × sted-dekning,Egen crawler,Matrise: for hver tjeneste i NACE-ordboken × hvert sted (by + bydeler i radius): finnes en side? Vises som rutenett i rapporten,≥ 80 % av hovedtjenestene,50-79 %,< 50 %,10,20%,"3,33%","Den viktigste arkitekturfaktoren, og den som lettest viser gap mot konkurrent"
+G019,Arkitektur,Egen side per tjeneste,Egen crawler,"Samme som L024 i del 1, gjentas her for del-score",≥ 80 %,50-79 %,< 50 %,9,20%,"3,00%","Whitespark #1 organisk, #2 AI"
+G020,Arkitektur,Klikkdybde,Egen crawler,Maks antall klikk fra forsiden til tjenestesider,≤ 2,3,> 3,6,20%,"2,00%",
+G021,Arkitektur,Hub-sider / temaområder,Egen crawler,"Oversiktsside per tjenesteområde som lenker til undersider, URL i mapper",Finnes,Delvis,Flat eller kaotisk,6,20%,"2,00%",
+G022,Arkitektur,Foreldreløse sider,Egen crawler,Sider i sitemap uten interne innlenker,0,1-3,> 3,5,20%,"1,67%",
+G023,Arkitektur,Intern lenking i brødtekst,Egen crawler,Snitt kontekstuelle interne lenker per side (utenom meny/footer),≥ 5,2-4,< 2,7,20%,"2,33%",
+G024,Arkitektur,Navigasjon dekker tjenestene,Egen crawler,Hovedmeny lenker til tjenestesidene (ikke bare 'Tjenester'),Alle hovedtjenester,Delvis,Kun samleside,5,20%,"1,67%",
+G025,Arkitektur,Brødsmuler,Egen crawler,BreadcrumbList-schema og synlige brødsmuler,Finnes,,Mangler,3,20%,"1,00%",
+G026,Arkitektur,URL-struktur,Egen crawler,"Lesbare, korte, små bokstaver, ingen parametere, konsistent",OK,Noen avvik,ID-baserte eller inkonsistente,4,20%,"1,33%",
+G027,Arkitektur,Lokasjonssider (flere avdelinger),Egen crawler,Én side per fysisk avdeling med egen NAP og eget kart,OK,,Mangler,5,20%,"1,67%",Kun hvis > 1 avdeling i Brreg
+G028,Innhold/on-page,"Title: unik, med tjeneste + sted",Egen crawler,Andel sider med unik title som inneholder tjenesteord; forside og landingsside må ha sted,"≥ 90 %, 0 duplikater",60-89 %,< 60 % eller mange duplikater,9,30%,"2,90%",
+G029,Innhold/on-page,"Meta description: unik, finnes",Egen crawler,Andel sider med unik meta description,≥ 90 %,50-89 %,< 50 %,4,30%,"1,29%","Påvirker klikk, ikke rangering"
+G030,Innhold/on-page,"H1: én per side, med tjenesteord",Egen crawler,Andel sider med nøyaktig én H1 som inneholder tjeneste,≥ 90 %,60-89 %,< 60 %,7,30%,"2,26%",
+G031,Innhold/on-page,Overskriftshierarki,Egen crawler,"H2/H3 brukt logisk, ingen hopp (H1→H3)",OK,Noen hopp,Ingen struktur,4,30%,"1,29%",
+G032,Innhold/on-page,Tynne sider,Egen crawler,"Sider med < 150 ord brødtekst (ekskl. kontakt, personvern)",0,1-3,> 3 eller tjenestesider er tynne,8,30%,"2,58%",
+G033,Innhold/on-page,Duplisert innhold,Egen crawler,Sider med > 80 % lik tekst (shingling),0,1-2,> 2,6,30%,"1,94%",Vanlig på bydelssider som er kopiert
+G034,Innhold/on-page,Søkeorddekning,Egen crawler + DataForSEO Keywords,Andel av NACE-ordbokens søkeord (med volum) som har en side som målretter dem,≥ 70 %,40-69 %,< 40 %,10,30%,"3,23%",Listen over udekkede ord med volum er selve salgsargumentet
+G035,Innhold/on-page,Geografisk relevans,Egen crawler,"By/bydel i title, H1, brødtekst og schema på landingsside og tjenestesider",Alle fire,To-tre,Én eller ingen,8,30%,"2,58%",
+G036,Innhold/on-page,Skannbarhet,Egen crawler,"Overskrifter per 300 ord, lister, bilder, korte avsnitt",≥ 1/300 ord,1 per 300-600,Tekstvegger,6,30%,"1,94%",Whitespark AI #10
+G037,Innhold/on-page,FAQ på tjenestesider,Egen crawler,Andel tjenestesider med FAQ (schema eller spørsmålsoverskrifter),≥ 50 %,1-49 %,0,5,30%,"1,61%",
+G038,Innhold/on-page,Ferskhet,Egen crawler,Median sist-oppdatert over tjenestesider,≤ 180 d,181-540 d,> 540 d eller ukjent,5,30%,"1,61%",
+G039,Innhold/on-page,E-E-A-T-signaler,Egen crawler,"Om oss-side med navngitte personer og kvalifikasjoner, kontaktside med NAP, orgnr i footer, personvernside",Alle,To-tre,Én eller ingen,7,30%,"2,26%","Avgjørende for helse (YMYL): tannlege, kiropraktor, lege"
+G040,Innhold/on-page,Bilder: ALT og filnavn,Egen crawler,Andel bilder med beskrivende ALT,≥ 90 %,50-89 %,< 50 %,3,30%,"0,97%",
+G041,Innhold/on-page,Call-to-action på tjenestesider,Egen crawler,Telefonlenke (tel:) og/eller bestillingsknapp synlig på hver tjenesteside,Alle,Noen,Ingen,5,30%,"1,61%","Konvertering, ikke rangering. Selger godt"
+G042,Innhold/on-page,Anmeldelser vist på nettsiden,Egen crawler,"Egen side/seksjon med anmeldelser, lenket fra meny",Finnes i meny,Finnes,Mangler,4,30%,"1,29%",Whitesparks anbefaling for AI
+G043,Innhold/on-page,Språk og hreflang,Egen crawler,"Ved flerspråk: hreflang riktig, ingen blandet språk på samme side",OK,Advarsler,Feil,2,30%,"0,65%",Kun hvis flere språk
+G044,Off-page,Henvisende domener,DataForSEO Backlinks,Antall unike henvisende domener vs topp 3 i kartet og topp 3 organisk,≥ snitt,50-99 %,< 50 %,9,20%,"2,73%",
+G045,Off-page,Domain rank,DataForSEO Backlinks,Vs konkurrentene,≥ snitt,50-99 %,< 50 %,8,20%,"2,42%",
+G046,Off-page,Lenkekvalitet,DataForSEO Backlinks,"Andel henvisende domener med rank > 20, andel fra .no",≥ 30 % / ≥ 50 % .no,,< 10 %,7,20%,"2,12%",
+G047,Off-page,Toksiske lenker,DataForSEO Backlinks,"Henvisende domener med spam-score høy, utenlandske kasino/apotek o.l.",0,1-5,> 5 eller > 10 % av profilen,5,20%,"1,52%",
+G048,Off-page,Ankertekstprofil,DataForSEO Backlinks,Fordeling: merkenavn / tjenesteord / generisk / URL. Overoptimalisert = risiko,Merke > 40 %,,Tjenesteord > 50 %,4,20%,"1,21%",
+G049,Off-page,Lokale lenker,DataForSEO Backlinks,"Henvisende domener med lokal tilknytning (bydel, Oslo, lokale foreninger, idrettslag, sponsorater)",≥ 5,1-4,0,8,20%,"2,42%",Whitespark #13 organisk
+G050,Off-page,Bransjelenker,DataForSEO Backlinks + bransjeliste,"Lenker fra foreninger, fagmedier, leverandører i bransjen",≥ 3,1-2,0,7,20%,"2,12%",
+G051,Off-page,Merkevaresøk,DataForSEO Keywords,Månedlig søkevolum på firmanavnet vs konkurrentene,≥ snitt,25-99 %,< 25 %,6,20%,"1,82%",Brukes også i del 4
+G052,Off-page,Omtaler uten lenke,DataForSEO SERP (geo),Treff på firmanavn på sider som ikke lenker,≥ 5,1-4,0,5,20%,"1,52%",Whitespark AI #12
+G053,Off-page,Nye lenker siste 12 mnd,DataForSEO Backlinks,Jevnt tilsig vs stillstand,≥ 1/mnd,Sporadisk,0 siste 6 mnd,4,20%,"1,21%",
+G054,Off-page,Sosiale profiler,Offentlig profil-crawl,"Facebook/Instagram/LinkedIn finnes, lenket fra nettsiden, aktive siste 90 dager",Alle,"Finnes, inaktive",Mangler,3,20%,"0,91%",Lav vekt: Whitespark gir sosialt 4 %
+,,,,,,,,,,,
+,,Sum vekt del 2,,,,,,,,"100,0%",
+,,"Undergruppevektene (30/20/30/20) er Simens startverdier og kan endres i kolonne J (endre på én rad, kopier nedover i undergruppen).",,,,,,,,,
+
+A. Måleprotokoll: blir virksomheten nevnt?,,,,,,,,,
+Kode,Modell / overflate,Tilgang,Hvorfor den er med,Kostnad per rapport,Kommentar,,,,
+M1,"ChatGPT (GPT-4o/5, web search på)",OpenAI Responses API med web_search-tool,"Størst forbrukerbase. Bruker Bing-indeksen for web, så Bing Places og Bing-indeksering teller",1-2 kr,"Må kjøres med søk på, ellers svarer den fra treningsdata",,,,
+M2,Gemini (med Google Search grounding),"Gemini API, grounding=google_search",Ser Google-profilen og Maps-data. Nærmest Google AI Mode,"0,5-1 kr",,,,,
+M3,Perplexity (sonar),Perplexity API,"Siterer kilder eksplisitt, gir god 'hvem nevnes i stedet'-data","0,5-1 kr",,,,,
+M4,Google AI Overview / AI Mode,DataForSEO SERP (ai_overview-element) der tilgjengelig,Vises over kartet på mange søk. Er den viktigste overflaten for lokale søk,Inkl. i SERP,Sjekk om DataForSEO leverer AI Mode for Norge; AI Overviews er ute i Norge,,,,
+M5,Copilot/Bing,Valgfri,Lav bruk i Norge,,Fase 2+,,,,
+,,,,,,,,,
+"Spørsmålsmaler (10-15 per virksomhet, fylles fra NACE-ordboken og adressen)",,,,,,,,,
+Kode,Mal,"Eksempel (tannlege, Skøyen)",Intensjon,Vekt,Kommentar,,,,
+Q1,Hvilken {tjeneste} anbefaler du i {bydel}?,Hvilken tannlege anbefaler du på Skøyen?,"Anbefaling, nær",3,,,,,
+Q2,Beste {tjeneste} i {by},Beste tannlege i Oslo,"Anbefaling, by",3,,,,,
+Q3,{tjeneste} nær {adresse/t-banestasjon},Tannlege nær Skøyen stasjon,Nærhet,2,,,,,
+Q4,Hva koster {hovedtjeneste} hos {tjeneste} i {by}?,Hva koster tannlegesjekk i Oslo?,Pris,2,Trigger ofte lister med navn,,,,
+Q5,{spesialtjeneste} {by},Akutt tannlege Oslo vest,Spesifikk tjeneste,2,Én per hovedtjeneste i ordboken,,,,
+Q6,{tjeneste} {by} med gode anmeldelser,Tannlege Oslo med gode anmeldelser,Omdømme,2,,,,,
+Q7,Er {firmanavn} en god {tjeneste}?,Er Smilia en god tannlege?,Merkevare,1,Sjekker om modellen kjenner virksomheten og hva den sier,,,,
+Q8,{tjeneste} {by} {attributt},Tannlege Oslo som tar imot nye pasienter / åpent lørdag / tannlegeskrekk,Attributt,1,Attributtliste per NACE,,,,
+Q9,Hvor ligger {firmanavn} og hva er telefonnummeret?,,Faktakontroll,1,Måler om NAP i svaret er riktig,,,,
+Q10,Anbefal tre {tjeneste} i {bydel} og hvorfor,,Liste,3,Gir konkurrentnavn,,,,
+,,,,,,,,,
+Måltall per modell og totalt,,,,,,,,,
+Kode,Måltall,Regel,OK,Advarsel,Kritisk,,,,
+AI-1,Nevnt-andel,Andel av spørsmålene (vektet) der virksomheten nevnes ved navn,≥ 50 %,10-49 %,< 10 %,,,,
+AI-2,Posisjon når nevnt,Snittplassering i listen når den nevnes (1 = først),≤ 2,3-4,> 4,,,,
+AI-3,Riktig NAP i svaret,"Når nevnt: navn, adresse og telefon korrekt (vs Brreg/Google)",Alt riktig,Ett avvik,Feil adresse/telefon eller 'stengt',,,,
+AI-4,Lenke/sitering til eget domene,Andel svar som siterer eller lenker til virksomhetens nettside,≥ 30 %,5-29 %,0,,,,
+AI-5,Hvem nevnes i stedet,"Topp 5 virksomheter som nevnes oftest på de samme spørsmålene, med antall",,,Vises alltid. Dette er sammenligningen kunden betaler for,,,,
+AI-6,Kildene modellene bruker,"Domener Perplexity/Gemini siterer for spørsmålene (kataloger, 'beste'-lister, bransjesider)",,,Mates inn i 'Prominence on key domains'. Viser hvilke lister man må inn på,,,,
+AI-7,Negative påstander,Modellen sier noe negativt eller feil om virksomheten,Ingen,,"Finnes (lagres som kort sitat, presenteres som 'modellen hevdet')",,,,
+,,,,,,,,,
+"Del 3-score = 60 % nevnt-andel (AI-1) + 20 % riktig NAP (AI-3) + 20 % sitering (AI-4), skalert 0-100, vist per modell og samlet. Konkurrentene i kartet kjøres på de samme spørsmålene (lett versjon: Q1, Q2, Q10) for sammenligning.",,,,,,,,,
+,,,,,,,,,
+B. Faktorer som avgjør AI-synlighet (hva riggen sjekker på nettsiden og rundt den),,,,,,,,,
+Kode,Faktor,Datakilde,Regel,OK,Advarsel,Kritisk,Vekt (1-10),Whitespark AI-rank 2026,Kommentar
+A001,På 'beste i Oslo'-lister,DataForSEO SERP (geo) + WebFetch,Som L107: nevnt på listesider i topp 10 for 'beste {tjeneste} {by}',≥ 2,1,0,10,1,Whitesparks viktigste AI-faktor. Rapporten viser hvilke lister konkurrentene står på
+A002,Egen side per tjeneste,Egen crawler,Som L024,≥ 80 %,50-79 %,< 50 %,9,2,
+A003,Oppført på bransjens nøkkelsider,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places) + bransjeliste",Som L066,Alle,Mangler 1,Mangler ≥ 2,9,3,Spør ChatGPT/Gemini 'hvilke nettsteder bruker du for å finne {tjeneste} i Oslo' og legg svarene i bransjelisten
+A004,Omtaler i medier/foreninger,DataForSEO SERP (geo),Som L064/L115,≥ 3,1-2,0,8,4,
+A005,Anmeldelser på flere plattformer,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Google + Facebook + Trustpilot + bransjeside,≥ 3 kilder,2,1,8,5,
+A006,Geografisk relevans i innhold,Egen crawler,Som L018,,,,7,6,
+A007,Google-rating,Places API (New),Som L006,"≥ 4,6","4,0-4,5","< 4,0",7,8,
+A008,Nisjefokus,Egen crawler,Som L035,,,,5,9,
+A009,Skannbar struktur,Egen crawler,Som L127,,,,6,10,
+A010,Omtaler uten lenke,DataForSEO SERP (geo),Som L126,,,,5,12,
+A011,Innholdsmengde,Egen crawler,Som L088,,,,5,14,
+A012,AI-roboter tillatt i robots.txt,Egen crawler,"GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Bingbot, CCBot ikke blokkert",Alle tillatt,Én blokkert,Flere blokkert,8,,"Ikke i Whitespark-listen, men avgjør om ChatGPT/Perplexity kan lese siden i det hele tatt"
+A013,Indeksert i Bing,Bing Webmaster/site:-søk via SERP-API,Domenet og tjenestesidene finnes i Bing (ChatGPT søker via Bing),Alle hovedsider,Kun forside,Ikke indeksert,7,,
+A014,Bing Places og Apple Maps,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Som L028,,,,6,31,
+A015,Strukturerte data,Egen crawler,"LocalBusiness(+undertype), FAQPage, Service med sameAs til profiler og kataloger",,,,6,44,
+A016,FAQ på tjenestesider,Egen crawler,Som L141,,,,5,43,
+A017,Semantisk trippel i første setning,Egen crawler,Første avsnitt på forside/landingsside sier '{Firma} er en {tjeneste} i {sted} som ...',Finnes,Delvis,Mangler,5,,Whitesparks anbefaling: samme setning i katalogbeskrivelsene
+A018,Beskrivelse i kataloger matcher nettsiden,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Beskrivelsesfeltet på 1881/Gule Sider/Proff/Facebook finnes og nevner tjeneste + sted,Alle,Noen,Ingen,5,,
+A019,llms.txt,Egen crawler,"Finnes på rot. Lavt bevis for effekt, lav vekt",Finnes,,Mangler,1,,Rapporteres som observasjon
+A020,Wikidata/Wikipedia-entitet,Wikidata API,Virksomheten finnes som entitet (relevant kun for kjeder),,,,1,,Kun kjeder
+,,,,,,,,,
+,"AI-beredskapsscore (vises ved siden av nevnt-andelen) = Σ(vekt × status) / Σ vekt. Hovedtallet kunden ser er likevel nevnt-andelen fra del A, fordi det er det eneste som ikke kan diskuteres.",,,,,,,,
+
+A. Hvordan organisk grunnmur gjør Google Ads mer lønnsomt,,,,,,,,,,,,
+Kode,Faktor,Hva i organisk-riggen den bygger på,Datakilde,Regel,OK,Advarsel,Kritisk,Vekt (1-10),Effekt på Ads,,,
+B001,Landingssideopplevelse (Quality Score),"LCP, INP, CLS, mobilvennlighet (del 2)",PageSpeed Insights API,Mobil LCP på landingssidene annonser ville sendt trafikk til,"≤ 2,5 s","2,5-4,0 s","> 4,0 s",9,Landing page experience er 1 av 3 komponenter i Quality Score. Lav QS = høyere CPC for samme posisjon,,,
+B002,Annonserelevans: egen side per tjeneste,Tjeneste × sted-dekning (del 2),Egen crawler,Finnes en dedikert side å sende hvert annonseord til? Uten den går trafikken til forsiden,≥ 80 % av ordene,50-79 %,< 50 %,10,Ad relevance og landing page relevance. Én side per tjeneste er samme krav i Ads som i SEO,,,
+B003,Søkeord på landingssiden,Title/H1/brødtekst (del 2),Egen crawler,Annonseordet finnes i title og H1 på landingssiden,,,,7,,,,
+B004,Merkevaresøk,Søkevolum firmanavn (del 1/2),DataForSEO Keywords,Volum på firmanavn vs konkurrentene,≥ snitt,25-99 %,< 25 %,8,Merkevaresøk har høy CTR og lav CPC. Lavt merkevolum betyr at all betalt trafikk kjøpes dyrt på generiske ord,,,
+B005,Konkurrenter annonserer på navnet,SERP på firmanavn,DataForSEO SERP (geo),Annonser fra andre på søk etter firmanavnet,Ingen,1,≥ 2,6,Uten organisk dominans på eget navn lekker merkevaresøk til konkurrenter,,,
+B006,Google-profil koblet (lokasjonsutvidelse),"Verifisert profil, NAP-samsvar (del 1)",Places API (New) + Egen crawler,"Profil finnes, verifisert, NAP = nettsiden",OK,Avvik,Ingen profil,7,Lokasjonsutvidelser og annonser i Maps krever koblet profil. Høyere CTR,,,
+B007,Rating ≥ 4 for selgervurderinger/ratingutvidelser,Google-rating og tredjeparts rating (del 1),"Places API (New) + Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Rating og antall anmeldelser,"≥ 4,5 og ≥ 100","4,0-4,4","< 4,0",6,Stjerner i annonsen løfter CTR. Krever volum på godkjente plattformer,,,
+B008,Konverteringssporing mulig,"tel:-lenker, skjema, bestillingsknapp (del 2)",Egen crawler,Finnes tel:-lenker og skjema/booking som kan spores (GTM/GA4-tag til stede),GA4 + tel: + skjema,Delvis,Ingen sporing,7,Uten konverteringssporing kan ikke Ads optimaliseres. Vises som 'du betaler blindt',,,
+B009,Organisk posisjon på annonseordene,SERP organisk (del 1),DataForSEO SERP (geo),For hvert ord med volum: organisk posisjon og om virksomheten annonserer,,,,8,Ord der de betaler OG ligger utenfor topp 10 organisk er dyrest. Ord der de ligger topp 3 organisk kan budsjettet senkes,,,
+B010,Local Services Ads-beredskap,"Rating, anmeldelser, kategori",Places API (New),Kun bransjer med LSA i Norge. Sjekk om Google har lansert LSA for bransjen i Norge før dette aktiveres,,,,3,Whitespark: LSA stjeler stor andel klikk der de finnes. Hold inaktiv til LSA er bekreftet i Norge,,,
+B011,Annonserer i det hele tatt,SERP på hovedsøkene,DataForSEO SERP (geo),Vises virksomheten som annonse? Vises konkurrentene?,,,,2,Kontekst for økonomisiden: 'Konkurrent X betaler for 7 av 10 søk der du er usynlig',,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+B. Regnemodell: hva tapt organisk synlighet koster,,,,,,,,,,,,
+Forutsetninger (gule celler justeres; vises i rapporten med kilde),,,,,,,,,,,,
+Nøkkel,Verdi,Kommentar / kilde,,,,,,,,,,
+ctr_kart_1,18%,Klikkandel kartposisjon 1. Bransjeestimat (lokalt pack samlet 35-45 %). Erstatt med egne Search Console-tall,,,,,,,,,,
+ctr_kart_2,13%,Kartposisjon 2,,,,,,,,,,
+ctr_kart_3,9%,Kartposisjon 3,,,,,,,,,,
+ctr_org_1,25%,Organisk posisjon 1 (lavere enn generelle studier fordi kart og annonser ligger over),,,,,,,,,,
+ctr_org_2,13%,Organisk 2,,,,,,,,,,
+ctr_org_3,9%,Organisk 3,,,,,,,,,,
+ctr_org_4_10,4%,Snitt organisk 4-10,,,,,,,,,,
+ctr_org_11_plus,0%,Utenfor side 1,,,,,,,,,,
+ai_overview_tap,15%,"Reduksjon i organiske klikk når AI Overview vises på søket (bransjeestimat, usikkert). Sett 0 for å slå av",,,,,,,,,,
+,,,,,,,,,,,,
+Per søkeord (eksempelrader for tannlege Skøyen; riggen fyller én rad per søkeord fra SERP- og volumdata),,,,,,,,,,,,
+Søkeord,Volum/mnd,CPC (kr),Kartposisjon nå (0 = ikke i topp 3),Organisk posisjon nå (0 = ikke topp 10),AI Overview vises (1/0),Klikkandel nå,Klikkandel mål (kart 1 + org 1),Tapte klikk/mnd,Ads-verdi av tapte klikk (kr/mnd),Konverteringsrate,Kundeverdi (kr),Tapt omsetning (kr/mnd)
+tannlege skøyen,480,38,0,6,0,"4,0%","43,0%",187,7 114,"4,0%",6 000,44 928
+tannlege oslo vest,720,41,2,0,1,"13,0%","43,0%",184,7 528,"4,0%",6 000,44 064
+akutt tannlege oslo,1300,55,0,0,1,"0,0%","43,0%",475,26 133,"4,0%",6 000,114 036
+tannbleking oslo,880,29,0,9,0,"4,0%","43,0%",343,9 953,"4,0%",6 000,82 368
+tannlegeskrekk oslo,260,24,0,0,0,"0,0%","43,0%",112,2 683,"4,0%",6 000,26 832
+Sum per måned,,,,,,,,1 301,53 410,,,312 228
+Sum per år,,,,,,,,,640 925,,,3 746 736
+,,,,,,,,,,,,
+"Slik leses det: 'Tapte klikk' er klikkene virksomheten ville hatt med kart 1 + organisk 1, minus de den har nå. 'Ads-verdi' er hva samme trafikk koster i Google Ads (tapte klikk × CPC). 'Tapt omsetning' bruker konverteringsrate og kundeverdi fra NACE-ordboken. Begge tall vises i rapporten med forutsetningene synlige, og økonomisiden sier eksplisitt at målet (kart 1 + org 1) er et tak, ikke et løfte. Eksempelverdiene for volum og CPC er illustrasjoner, ikke målte tall.",,,,,,,,,,,,
+
+Kode,Whitespark negativ faktor 2026,Rank,Score,Målbart,Datakilde,Regel,Kommentar
+N001,Business Marked as Permanently Closed,1,217,Ja,Places API (New),businessStatus = CLOSED_PERMANENTLY,Kritisk alltid. Hopper over resten av rapporten og varsler
+N002,Incorrect Primary Category,2,214,Ja,Places API (New),primaryType ≠ forventet for NACE,
+N003,Presence of Other Profiles in the Same Category at the Same Address (The Filter),3,188,Ja,Places API (New),Places Nearby Search: andre profiler med samme type innen 25 m,Vanlig i helsehus og kontorfellesskap. Sterkt salgsargument
+N004,Low Numerical Ratings of Google Reviews (e.g. 1-2),4,168,Ja,Places API (New),"rating < 3,5",
+N005,Business Marked as Temporarily Closed,5,166,Ja,Places API (New),businessStatus = CLOSED_TEMPORARILY,Ofte glemt etter ferie/flytting
+N006,Incorrectly-placed Map Marker in GBP,6,164,Ja,Places API (New),Som L010: > 200 m fra adressen,
+N007,Site Hacked / Presence of Malware,7,164,Ja,Google Safe Browsing API + Egen crawler,"Safe Browsing-status, skjulte lenker til kasino/apotek, injisert tekst",
+N008,No Hours of Operation on GBP,8,141,Ja,Places API (New),regularOpeningHours mangler,
+N009,Category Confusion (adding additional categories from completely unrelated industries),9,125,Ja,Places API (New),types inneholder kategorier utenfor NACE-ordbokens relevante liste,
+N010,Absence of Crawlable NAP on Website,10,121,Ja,Egen crawler,NAP finnes ikke som tekst (kun bilde/JS),
+N011,Negative Sentiment in Google Reviews,11,121,Nei,,,Tekst lagres ikke. Rating-fordeling (andel 1-2 stjerner) brukes som proxy hvis profilsiden scrapes
+N012,Not Showing Address on GBP,12,118,Ja,Places API (New),Som L007,
+N013,Website URL Forwards to a Different Domain,13,115,Ja,Egen crawler,URL på profilen omdirigerer til annet domene,
+N014,Absence of Crawlable NAP on GBP Landing Page,14,114,Ja,Egen crawler,Landingssiden profilen lenker til mangler NAP i tekst,
+N015,Mis-match Address on GBP Landing Page,15,110,Ja,Egen crawler + Places API (New),Adresse på landingssiden ≠ Places,
+N016,"Address is a PO Box, UPS Mail Store, Virtual Office, or Other False Address",16,106,Delvis,Brreg API + Places API (New),"Forretningsadresse = postboks, eller adresse deles av > 20 virksomheter i Brreg (kontorhotell)",
+N017,Incomplete/Missing Data on the Primary Data Sources,17,105,Ja,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Mangler på 1881/Gule Sider/Proff/Bing/Apple,
+N018,"Profiles with Same Address/Phone Marked as ""Permanently Closed""",18,102,Delvis,Places API (New),Nearby Search: stengte profiler med samme telefon/adresse,
+N019,Reports of Violations on your GBP,19,102,Nei,,,Ikke synlig
+N020,Quantity of Negative Google Review Attributes,20,100,Nei,,,Ikke i API
+N021,Reports of Fake Reviews on your GBP,21,92,Nei,,,
+N022,Reports of Review Gating,22,92,Nei,,,
+N023,Presence of Multiple Profiles with Same Phone Number,23,91,Delvis,Places API (New) + DataForSEO SERP (geo),Text Search på telefonnummeret gir > 1 profil,
+N024,Mis-match NAP / Tracking Phone Numbers Across Data Ecosystem,24,90,Ja,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)",Ulike telefonnumre på tvers av kataloger (sporingsnumre),
+N025,Association of GBP with a Suspended Google User Account,25,80,Nei,,,
+N026,Low Numerical Ratings of Third-party Reviews (e.g. 1-2),26,74,Delvis,"Katalog-crawl (1881, Gule Sider, Proff, Brreg, Facebook, Apple Maps, Bing Places)","Facebook/Trustpilot-rating < 3,5",
+N027,Overlapping Service Areas on Multiple-Location GBPs,27,71,Nei,,,"Kun kjeder, krever eiertilgang"
+N028,Association of GBP with Other Suspended Listings,28,70,Nei,,,
+N029,Negative Sentiment in Third-Party Reviews,29,70,Nei,,,
+N030,Receiving Too Many Google Reviews Too Fast,30,68,Delvis,Places API (New),> 20 anmeldelser siste 7 dager (fra datoene på de 5 nyeste),Grovt
+N031,Presence of AI-Generated Photos/Videos on Profile,31,55,Nei,,,
+N032,Listing 800 Number as the Only Phone Number in GBP,32,54,Ja,Places API (New),Telefon starter med 800/810/815 (norske spesialnumre),
+N033,Presence of Stock Photos/Videos on Profile,33,53,Nei,,,Krever bildeanalyse
+N034,Setting Service Areas Larger Than 2-hours Driving Distance,34,53,Delvis,Scrape av offentlig GBP-profilside (Playwright),Serviceområder dekker > 2 timers kjøring,Håndverkere
+N035,Keyword Stuffing in GBP Business Name,35,52,Ja,Places API (New) + Brreg API,"Profilnavn ≠ Brreg-navn, og inneholder > 2 tjeneste-/stedsord","Risiko for suspensjon. Rapporteres som risiko, aldri som tips"
+N036,No Owner Responses to Any Reviews,36,51,Delvis,Scrape av offentlig GBP-profilside (Playwright),0 eiersvar på synlige anmeldelser,
+N037,Showing Your Address on GBP When Business is a Service Area Business,37,39,Delvis,Brreg API + Places API (New),NACE er mobil tjeneste (rørlegger o.l.) og adressen er privatbolig,
+N038,Keyword Stuffing Google Posts/Updates Content,38,38,Nei,,,
+N039,Keyword Stuffing the Title Tag of GBP Landing Page,39,34,Ja,Egen crawler,Title > 120 tegn eller samme ord > 3 ganger,
+N040,Presence of AI-Generated Text Content on Profile,40,31,Nei,,,
+N041,Keyword Stuffing the GBP Description,41,21,Delvis,Scrape av offentlig GBP-profilside (Playwright),Samme tjenesteord > 4 ganger i beskrivelsen,
+N042,Presence of 3rd Party Reviews in Schema/JSON on Website,42,21,Ja,Egen crawler,AggregateRating/Review-schema med Google-anmeldelser (brudd på Googles retningslinjer),Vanlig i WordPress-plugins
+,,,,,,,
+,Negative faktorer trekkes ikke fra scoren. De vises som egen boks øverst i rapporten ('3 røde flagg') fordi de er det som får folk til å ringe.,,,,,,
+
+NACE,Bransje,Forventet GBP-primærkategori,Relevante tilleggskategorier,"Tjenesteord (søkeord-maler, kommaseparert)",Konverteringsrate (klikk → kunde),"Kundeverdi (kr, første år)",Bransjesider/kataloger,Attributter for AI-spørsmål,Antall i Oslo (ca.),Kilde for konvertering og verdi
+86.230,Tannlege,Tannlege (dentist),"Tannlegekontor, Tannlegespesialist, Tannpleier, Kjeveortoped, Tannlegevakt","tannlege, tannlegekontor, akutt tannlege, tannlegevakt, tannbleking, tannregulering, implantat, rotfylling, visdomstann, tannlegeskrekk, tannrens, krone, usynlig regulering","4,0%",6 000,"Tannlegeforeningen (finn tannlege), Helsenorge, Legelisten, Tannlegepriser","nye pasienter, åpent lørdag, tannlegeskrekk, Helfo-refusjon, akutt",400,"Sett av Simen: eksempelverdier, må begrunnes"
+43.221,Rørlegger,Rørlegger (plumber),"VVS-firma, Varmepumpeinstallatør, Baderomsrenovering","rørlegger, rørleggervakt, akutt rørlegger, vannlekkasje, bad, baderom, varmtvannsbereder, tett avløp, varmepumpe, vannbåren varme","6,0%",9 000,"Rørentreprenørene Norge, Mittanbud, Byggstart","døgnvakt, fastpris, akutt, Oslo vest",600,
+86.909,Kiropraktor,Kiropraktor,"Fysioterapeut, Naprapat, Osteopat, Helsesenter","kiropraktor, nakkesmerter, ryggsmerter, ischias, hodepine, svimmelhet, kiropraktor barn","5,0%",3 500,"Norsk Kiropraktorforening, Helsenorge, Legelisten","nye pasienter, akutt, kveld",150,
+69.100,Advokat,Advokat,"Advokatfirma, Familierettsadvokat, Arbeidsrettsadvokat","advokat, advokat arv, advokat samlivsbrudd, advokat barnefordeling, advokat arbeidsrett, advokat husleie, advokat nabo","3,0%",25 000,"Advokatenhjelperdeg.no, Advokatforeningen","gratis førstesamtale, fri rettshjelp, fastpris",1500,
+43.210,Elektriker,Elektriker,"Elinstallatør, Elbillader-installatør","elektriker, elektriker vakt, elbillader, sikringsskap, el-sjekk, varmekabler, downlights","6,0%",8 000,"Nelfo, Mittanbud, Byggstart","døgnvakt, fastpris",500,
+86.901,Fysioterapeut,Fysioterapeut,"Idrettsfysioterapeut, Manuellterapeut","fysioterapeut, fysioterapi, manuellterapeut, idrettsskade, kneskade, skuldersmerter","5,0%",3 000,"Norsk Fysioterapeutforbund, Helsenorge","uten henvisning, driftstilskudd",400,
+45.200,Bilverksted,Bilverksted,"Dekkhotell, EU-kontroll, Bilglass","bilverksted, eu-kontroll, dekkskift, dekkhotell, service bil, bremser, bilglass","7,0%",4 000,"Bilbransjeforbundet, NAF","mens du venter, lånebil, elbil",600,
+96.020,Frisør,Frisør,"Barberer, Hårstudio","frisør, frisør dame, frisør herre, barberer, farging, klipp, balayage","8,0%",2 500,NFVB,"drop-in, kveld, søndag",900,
+68.310,Eiendomsmegler,Eiendomsmegler,Boligmegler,"eiendomsmegler, selge bolig, verdivurdering, megler","2,0%",60 000,"Eiendom Norge, Finn",gratis verdivurdering,250,
+69.201,Regnskapsfører,Regnskapsfører,"Regnskapsbyrå, Revisor","regnskapsfører, regnskapsbyrå, regnskap små bedrifter, årsoppgjør, lønn","3,0%",40 000,Regnskap Norge,"fastpris, oppstart",800,
+,,,,,,,,,,
+"Konverteringsrate og kundeverdi er plassholdere som må settes med kilde før de brukes i en rapport: egne kundetall, bransjeforeningens tall, eller Google Ads benchmark. Søkeordmaler kombineres med sted: '{ord} {bydel}', '{ord} {by}', '{ord} nær meg'. Volum og CPC hentes per kombinasjon fra DataForSEO. 'Antall i Oslo' er grove anslag fra PDF-en, Brreg gir det nøyaktige tallet per NACE og postnummer.",,,,,,,,,,

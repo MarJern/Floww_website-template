@@ -1,0 +1,45 @@
+# Floww Media (Floww AS)
+
+> Eksklusivt byrå for organisk vekst for ambisiøse virksomheter i Norge. Vi sikrer bedrifter målbare konkurransefortrinn gjennom teknisk SEO, Google Business Profile (Map Pack), AI-SEO (GEO) og lynraske nettsider bygget for konvertering. Vi tar kun én klient per bransje per geografisk marked.
+
+## Selskapsinformasjon (NAP & Entitetsdata)
+
+- **Juridisk navn:** Floww AS
+- **Markedsnavn:** Floww Media
+- **Organisasjonsnummer:** 922 758 476 MVA
+- **Brønnøysundregistrene:** https://virksomhet.brreg.no/nb/oppslag/enheter/922758476
+- **Forretningsadresse:** Edvard Storms gate 2, 0166 Oslo, Norge
+- **Telefon:** +47 458 43 554
+- **E-post:** kontakt@flowwmedia.no
+- **Nettside:** https://flowwmedia.no
+- **Nøkkelpersoner:**
+  - Simen Russ, Senior SEO-spesialist & Partner (15+ års erfaring med organisk synlighet for over 80 norske og internasjonale merkevarer, tidl. Head of SEO i dentsu)
+  - Marja Jernsletten, Utvikler, Teknisk Arkitekt & Partner (Spesialist på teknisk webutvikling, universell utforming / WCAG, ytelse og konverteringsarkitektur)
+
+## Kjerneområder og Tjenester
+
+- [Gratis SEO- og AI-synlighetsanalyse (Synlighetsrapporten)](https://flowwmedia.no/seo-analyse): Interaktiv teknisk dybdeanalyse som måler bedriftens synlighet på tvers av 245 vektede rangeringsfaktorer i Google Søk, Google Maps (3×3 Geo-Grid), norske bransjekataloger (NAP) og AI-søkemotorer (ChatGPT, Gemini, Claude og Perplexity).
+- [Søkemotoroptimalisering og Organisk Søk (SEO)](https://flowwmedia.no/seo): Helhetlig organisk vekst bygget på teknisk SEO, semantiske innholdssiloer (On-Page) og verifisert lenke- og katalogautoritet (Off-Page).
+- [Lokal SEO og Google Kartpakken](https://flowwmedia.no/lokal-seo): Datadrevet arbeid for å plassere virksomheten blant topp 3 i Google-kartet (Map Pack), der 48 % av alle lokale klikk skjer.
+- [AI-SEO og Generativt Søk (GEO)](https://flowwmedia.no/ai-seo): Teknisk strukturering med JSON-LD Schema.org, entitetskobling (`sameAs`), `/llms.txt` og katalogkonsistens slik at språkmodeller som ChatGPT, Gemini, Claude og Perplexity anbefaler bedriften.
+- [Google Ads og Quality Score](https://flowwmedia.no/google-ads): Kombinert teknisk landingssideoptimalisering og kirurgisk annonsering som løfter Quality Score (1–10) og kutter klikkprisen (CPC) med opptil 50 %.
+- [Teknisk Webutvikling og Konverteringsarkitektur](https://flowwmedia.no/nettsider): Utvikling av nettsider som laster på under ett sekund (Core Web Vitals / LCP / INP), bygget med semantiske innholdssiloer, maskinlesbar skjemakode og konverteringsfokus.
+
+## Fagartikler og Innsikt
+
+- [Innsikt og fagartikler om SEO](https://flowwmedia.no/artikler)
+- [Hva er lokal SEO?](https://flowwmedia.no/artikler/hva-er-lokal-seo)
+- [Hvordan komme øverst i Google-kartet](https://flowwmedia.no/artikler/hvordan-komme-overst-i-google-kartet)
+- [Google Business-profil for klinikker og lokale bedrifter](https://flowwmedia.no/artikler/google-business-profil-klinikk)
+- [Slik får virksomheten flere anmeldelser på Google](https://flowwmedia.no/artikler/flere-anmeldelser-klinikk)
+- [Slik bør nettsiden bygges opp for lokal synlighet](https://flowwmedia.no/artikler/nettside-for-klinikk)
+- [Hvorfor dukker ikke virksomheten opp i Google?](https://flowwmedia.no/artikler/hvorfor-dukker-ikke-klinikken-opp)
+- [Slik sjekker du hvor dere ligger i Google-kartet](https://flowwmedia.no/artikler/sjekk-hvor-klinikken-ligger)
+- [Hva koster lokal søkemotoroptimalisering?](https://flowwmedia.no/artikler/hva-koster-lokal-seo)
+
+## Selskaps- og Juridiske Sider
+
+- [Om Floww Media](https://flowwmedia.no/om-oss)
+- [Kontakt Floww Media](https://flowwmedia.no/kontakt)
+- [Personvernerklæring (GDPR)](https://flowwmedia.no/personvern)
+- [Avtalevilkår](https://flowwmedia.no/vilkar)

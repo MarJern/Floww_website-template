@@ -1,0 +1,25 @@
+{
+  "companyName": "Smilia Tannklinikk",
+  "domain": "smilia.no",
+  "searchQuery": "\"Smilia Tannklinikk\" -site:smilia.no",
+  "totalMentions": 2,
+  "uniqueDomainsCount": 2,
+  "mentions": [
+    {
+      "domain": "tannlegeforeningen.no",
+      "url": "https://www.tannlegeforeningen.no/medlemmer/oslo/smilia",
+      "title": "Medlemsoversikt Oslo - Smilia Tannklinikk",
+      "snippet": "Smilia Tannklinikk er registrert i medlemsoversikten til Den norske tannlegeforening.",
+      "isEditorialOrNews": false
+    },
+    {
+      "domain": "legelisten.no",
+      "url": "https://www.legelisten.no/tannleger/oslo/smilia-tannklinikk",
+      "title": "Smilia Tannklinikk Majorstuen - Legelisten",
+      "snippet": "Oversikt over behandlere hos Smilia Tannklinikk i Sørkedalsveien 11G.",
+      "isEditorialOrNews": false
+    }
+  ],
+  "hasHighAuthorityMentions": false,
+  "evaluatedAt": "2026-10-14T08:00:00.000Z"
+}

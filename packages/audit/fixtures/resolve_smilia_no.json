@@ -1,0 +1,41 @@
+{
+  "domain": "smilia.no",
+  "brregEnhet": {
+    "organisasjonsnummer": "934551826",
+    "navn": "SMILIA TANNKLINIKK AS",
+    "organisasjonsform": {
+      "kode": "AS",
+      "beskrivelse": "Aksjeselskap"
+    },
+    "naeringskode1": {
+      "kode": "86.230",
+      "beskrivelse": "Tannlegetjenester"
+    },
+    "forretningsadresse": {
+      "adresse": ["Sørkedalsveien 11G"],
+      "postnummer": "0369",
+      "poststed": "OSLO",
+      "kommune": "OSLO"
+    },
+    "hjemmeside": "smilia.no"
+  },
+  "subUnitCount": 1,
+  "placeCandidate": {
+    "id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+    "displayName": {
+      "text": "Smilia Tannklinikk Majorstuen",
+      "languageCode": "no"
+    },
+    "formattedAddress": "Sørkedalsveien 11G, 0369 Oslo, Norge",
+    "location": {
+      "latitude": 59.9304,
+      "longitude": 10.7138
+    },
+    "primaryType": "dentist",
+    "types": ["dentist", "health", "point_of_interest", "establishment"],
+    "websiteUri": "https://www.smilia.no/",
+    "businessStatus": "OPERATIONAL",
+    "rating": 4.9,
+    "userRatingCount": 142
+  }
+}

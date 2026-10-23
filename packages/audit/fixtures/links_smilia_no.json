@@ -1,0 +1,43 @@
+{
+  "domain": "smilia.no",
+  "domainRank": 21,
+  "totalBacklinks": 64,
+  "referringDomains": 9,
+  "referringMainDomains": 9,
+  "referringIps": 8,
+  "toxicBacklinksCount": 0,
+  "toxicBacklinksPercent": 0,
+  "anchors": [
+    {
+      "anchor": "smilia tannklinikk",
+      "backlinks": 28,
+      "referringDomains": 4,
+      "category": "brand"
+    },
+    {
+      "anchor": "smilia.no",
+      "backlinks": 18,
+      "referringDomains": 2,
+      "category": "url"
+    },
+    {
+      "anchor": "les mer her",
+      "backlinks": 14,
+      "referringDomains": 2,
+      "category": "generic"
+    },
+    {
+      "anchor": "tannlege majorstuen",
+      "backlinks": 4,
+      "referringDomains": 1,
+      "category": "keyword"
+    }
+  ],
+  "anchorDistribution": {
+    "brandPercent": 43.8,
+    "keywordPercent": 6.2,
+    "genericPercent": 21.9,
+    "urlPercent": 28.1
+  },
+  "evaluatedAt": "2026-10-14T08:00:00.000Z"
+}

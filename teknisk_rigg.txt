@@ -1,0 +1,478 @@
+Oppsummering
+Riggen er tre ting: en nettside på Vercel som tar imot domener og viser rapporter, en Supabase-database som holder alt, og en flåte av workers på Railway som gjør selve analysen. Alt mellom «kunden skriver inn domenet» og «Simen ringer» skjer uten mennesker.
+Inngang: kunden skriver domenet på flowwmedia.no/rapport og får en e-postlenke (ingen passord). Bulk-listen fra Brreg går inn samme vei, bare uten at noen ber om det.
+Analyse: en jobb per domene kjører 11 moduler på 2 til 5 minutter i en Node-worker på Railway. Faktorlisten fra regnearket er data i databasen, ikke kode.
+Rapport: én JSON per jobb, vist som teaser (gratis) og full rapport (betalt) på samme adresse. PDF lages fra samme side.
+Betaling: Stripe Checkout, 1 500 kr. Webhooken låser opp rapporten, sender kvittering, og legger kunden i leads med Slack-varsel og et bookingvindu.
+Byggeverktøy: Antigravity bygger det i skiver, hver skive med en test som må passere før neste. Repoet er Tannlegepriser-monorepoet, med rapporten som ny app og packages/audit som ny pakke.
+Riggen er bransjeuavhengig. Den bestemmer selv profiltype (lokal, flere avdelinger, nasjonal, nettbutikk, B2B) fra Brreg, Google-profilen og nettstedet, bygger søkeordene fra det den finner, og vekter de fire delene etter profiltypen. Ingen bransje er hardkodet; bransjeordboken i regnearket er bare en overstyring der automatikken bommer.
+Dette dokumentet går dypere enn datarigg-notatet fra 9. oktober på fire punkter: datamodellen i detalj, moduler som kontrakt, hva som mates inn hvor, og rekkefølgen Antigravity skal bygge i.
+Brukerreisen
+Fra domene til telefon er det ni steg. De åtte første er automatiske, det niende er Simen.
+Domene inn. Kunden skriver domenet og e-posten sin på flowwmedia.no/rapport. Siden slår opp i Brreg mens de skriver og viser «Er dette dere? Eksempel AS, Storgata 1». Ett klikk bekrefter. Supabase Auth sender en engangslenke til e-posten (magic link). Ingen passord.
+Jobb i kø. Bekreftelsen oppretter businesses + audit_jobs(status=queued). Kunden ser en ventesiden med fremdrift per modul («Google-profil: ferdig. Kartplassering: kjører») via Supabase Realtime.
+Analyse. En worker på Railway plukker jobben, kjører modulene, skriver findings, scorer, og lagrer reports.json. 2 til 5 minutter. Konkurrentene i kartet får egne, lettere jobber.
+Teaser. Ventesiden blir til teaseren på rapport.flowwmedia.no/r/{slug}: score mot tre konkurrenter, antall funn per del, kroneestimat, tre funn i klartekst, resten låst. Samme teaser går på e-post (Resend) med lenken.
+Betaling. «Åpne hele rapporten, 1 500 kr» åpner Stripe Checkout. Kort, Apple Pay, Google Pay. Faktura (EHF) for de som ber om det kommer senere.
+Opplåsing. Stripes webhook checkout.session.completed treffer en Vercel-rute som setter orders.status=paid, reports.unlocked_at, og legger en rad i leads. Siden oppdaterer seg selv via Realtime: kunden ser full rapport uten å laste på nytt.
+Kvittering og PDF. Resend sender kvittering med lenke. PDF rendres av en worker (Playwright mot rapportsiden med en signert nøkkel) og legges i Supabase Storage. Lenken i rapporten peker dit.
+Lead-varsel. Slack-melding til #leads: navn, bransje, score, de tre verste funnene, telefon fra Brreg, og en knapp som åpner rapporten i admin. Kunden får samtidig e-post nummer to: «Simen ringer deg innen 24 timer. Vil du velge tidspunkt selv?» med Cal.com-lenke.
+Telefon. Simen ringer med rapporten åpen i admin. Utfallet (møte, vunnet, tapt) settes i leads, og det er slutten på det automatiske.
+To regler som gjelder hele veien: en rapport er lesbar i 12 måneder på samme lenke, og en betalt rapport som ikke er ringt innen 48 timer gir et nytt Slack-varsel merket «for sent».
+Arkitektur
+
+
+arkitektur · tre kjøremiljøer, tre eksterne lag
+Vercel og Railway snakker aldri direkte med hverandre. Alt går via Supabase: Vercel skriver en jobb, en worker plukker den, Vercel leser resultatet. Det gjør at hver del kan byttes ut eller skaleres alene.
+Hvorfor analysen ikke kan ligge på Vercel. Én jobb er en crawl på opptil 200 sider, 10 til 15 API-kall som hver kan ta 5 til 30 sekunder, og Playwright for katalogsider og PDF. Det tar 2 til 5 minutter og trenger retry per modul. Vercel Pro kjører funksjoner i inntil 5 minutter (Fluid compute lenger), men uten kø, uten retry og med kaldstart per kall. Det er feil verktøy, selv om grensen ikke lenger er 60 sekunder. Railway gir en Node-prosess som lever hele tiden, med Playwright installert, og som kan kjøres i flere kopier når bulk-listen skal gjennom på en natt.
+Hvorfor pg-boss og ikke pgmq eller en egen kø. pg-boss er et npm-bibliotek som bruker Supabase-databasen som kø, med retry, prioritet, planlagte jobber og ferdige tabeller. Ingen ekstra tjeneste, ingen ekstra faktura, og jobbstatus ligger i samme database som rapporten, så ventesiden kan abonnere på den via Realtime.
+Teknologivalg, kort:
+Lag
+Valg
+Alternativ som ble vraket
+Nettside
+Next.js 15 (App Router) på Vercel
+Ren Supabase-hosting: mangler SSR og webhooks
+Database, auth, filer
+Supabase (Postgres, Auth, Storage, Realtime)
+Egen Postgres: mer drift, ingen gevinst
+Kø
+pg-boss i Supabase-databasen
+pgmq (mangler retry-logikk i klienten), Inngest (ekstra tjeneste)
+Workers
+Node 22 + TypeScript på Railway, Docker-image med Playwright
+Fly.io (mer konfig), Vercel (se over)
+ORM og migrasjoner
+Drizzle, som i Tannlegepriser
+Prisma
+Crawler
+Crawlee + Playwright (gjenbruk fra Tannlegepriser)
+Egen fetch-crawler: ingen JS-rendring
+SERP, volum, lenker
+DataForSEO (ett API for alt)
+Serper + Ahrefs: to avtaler, dyrere
+Hastighet
+PageSpeed Insights API
+Egen Lighthouse: tungt i worker
+AI-synlighet
+OpenAI Responses (web search), Gemini (grounding), Perplexity sonar
+
+
+Betaling
+Stripe Checkout + Stripe Tax
+Vipps direkte: legges til senere, se del 7
+E-post
+Resend med eget sendedomene
+Postmark (like bra, Resend har React-maler)
+PDF
+Playwright page.pdf() i worker
+Puppeteer på Vercel: for tungt
+Observability
+Sentry (web + worker), Railway-logger, Slack-alarm ved feilet jobb
+
+
+
+Datamodellen i Supabase
+Fjorten tabeller. factors er regnearket fra fase 0 lastet rett inn; alt annet henger på audit_jobs.
+Tabell
+Holder
+Nøkkel og viktige kolonner
+businesses
+Én rad per virksomhet
+orgnr unik, domain unik, name, org_form (AS/ENK/...), nace, address, postcode, lat/lng, places_id, source (self_serve/bulk), email, phone
+audit_jobs
+Én rad per kjøring
+business_id, kind (full/competitor), status (queued/running/done/failed), priority, modules_done jsonb, started_at, finished_at, error
+factors
+Faktorlisten, data ikke kode
+code (L001, G012, A003, B004), part (1-4), group, name_no, source, rule, threshold_ok/warn/crit, weight_map/organic/ai, active, whitespark_rank_*
+findings
+Én rad per faktor per jobb
+job_id + factor_code, status (ok/warn/crit/na), value jsonb, evidence jsonb (URL, tall, skjermbilde-sti), competitor_values jsonb
+raw_fetches
+Rådata per modul, slettes etter 30 dager
+job_id + module, payload jsonb, fetched_at, expires_at
+keywords
+Ordbok per NACE med volum og CPC
+nace + keyword + geo, volume, cpc, updated_at (cache 90 dager)
+serp_snapshots
+Kart og organisk per søkeord og punkt
+job_id + keyword + grid_point, map_top3 jsonb, organic_top10 jsonb, ads jsonb, ai_overview bool
+competitors
+De tre fra kartet, delt mellom jobber
+places_id unik, name, rating, review_count, light_score, refreshed_at
+ai_checks
+Én rad per spørsmål per modell
+job_id + model + question, mentioned bool, position, nap_correct, cited_domain, others_mentioned text[], snippet (maks 300 tegn)
+reports
+Ferdig rapport
+job_id, slug unik (24 tegn), json jsonb, score_total, scores_by_part jsonb, finding_counts jsonb, nok_estimate, teaser_findings jsonb, unlocked_at, pdf_path, expires_at (12 mnd)
+orders
+Stripe-kjøp
+stripe_session_id unik, report_id, amount, status (pending/paid/refunded), email, paid_at
+leads
+Varme leads
+report_id, business_id, contact_name, phone, status (new/called/meeting/won/lost), owner, notes, called_at, sla_breached bool
+outreach
+Bulk-utsendelser
+business_id + campaign, step (1/2/3), sent_at, opened_at, clicked_at, unsubscribed_at, bounced
+campaigns
+Én per bransje og område
+nace, postcodes int4range[], status, created_by, counts jsonb
+
+Regler i databasen, ikke i koden:
+RLS: reports kan leses anonymt via slug, men kolonnen json returneres bare når unlocked_at er satt eller leseren har en signert nøkkel. Teaseren er en egen view, report_teasers, som alltid er lesbar.
+raw_fetches har en cron (pg_cron) som sletter rader med expires_at < now() hver natt. Det er 30-dagersregelen for Places.
+findings.evidence lagrer aldri anmeldelsestekst. Modulen som leser anmeldelser skriver bare antall, snitt og datoer.
+leads får en trigger: når created_at er over 48 timer og called_at er null, settes sla_breached og en pg_net-POST går til Slack.
+businesses.org_form styrer utsending: bare AS, ASA, NUF, SA og tilsvarende får e-post. ENK går til ringeliste.
+Schema skrives i Drizzle i packages/db, med én migrasjon per skive. Antigravity får tabellen over som spesifikasjon, ikke SQL.
+Analysepipelinen
+En jobb er 11 moduler i tre bølger. Bølge 1 finner virksomheten, bølge 2 henter alt parallelt, bølge 3 regner. Feiler én modul, merkes dens faktorer na og rapporten lages likevel.
+Bølge
+Modul
+Henter
+Kilde
+Tid
+Kostnad
+1
+resolve
+Orgnr, navn, selskapsform, NACE, adresse, geokoordinat, Places-id
+Brreg API, Places Text Search
+5 s
+0,3 kr
+1
+keywords
+Søkeord bygget automatisk: Places-kategori, titler og H1 fra nettstedet og NACE-teksten, utvidet med DataForSEO keyword suggestions, filtrert på volum, kombinert med sted når profilen er lokal. Cache 90 d per NACE og sted
+DataForSEO Keywords
+10 s
+0,5 kr
+2
+gbp
+Kategorier, åpningstider, rating, antall anmeldelser, datoer på de 5 nyeste, bilder, nettsted, telefon
+Places Details (New)
+3 s
+0,2 kr
+2
+crawl
+Opptil 200 sider: title, meta, H1-H3, ord, lenker, schema, bilder, canonical, robots, sitemap, NAP, tel:-lenker, GA/GTM
+Crawlee + Playwright
+60-120 s
+0
+2
+serp
+Kart topp 3 og organisk topp 10 for 8-12 søkeord fra 9 punkter (3×3 grid, 1 km), annonser, AI Overview
+DataForSEO SERP
+30 s
+4-8 kr
+2
+speed
+LCP, INP, CLS, performance, mobil, TTFB på landingsside + 3 tjenestesider
+PageSpeed Insights
+40 s
+0
+2
+links
+Henvisende domener, domain rank, ankertekster, nye lenker siste 12 mnd, toksiske
+DataForSEO Backlinks
+10 s
+1-3 kr
+2
+citations
+NAP og utfylling på 1881, Gule Sider, Proff, Facebook, Apple Maps, Bing Places, bransjekataloger per NACE
+Playwright + Bing Places API
+40 s
+0
+2
+mentions
+Omtaler, «beste i Oslo»-lister, omtaler uten lenke
+DataForSEO SERP på firmanavn + fetch av listesider
+20 s
+1 kr
+2
+ai
+10 spørsmål × 3 modeller: nevnt, posisjon, NAP riktig, sitering, hvem ellers
+OpenAI, Gemini, Perplexity
+60 s (parallelt)
+3-5 kr
+3
+score
+Status per faktor mot terskler, vekter, score per del, topp 3 teaser-funn, kroneestimat, rapport-JSON
+factors-tabellen
+2 s
+0
+
+Profiltype styrer resten. resolve setter businesses.profile_type før bølge 2 starter, fra fire signaler: har Google-profil med adresse (Places), antall underenheter (Brreg), handlekurv, prisliste eller bestillingsflyt på nettstedet (crawl), og NACE. Profiltypen avgjør tre ting: hvilke konkurrenter som hentes (kartet for lokal, organisk topp 10 for nasjonal og nettbutikk, topp 10 på kategorisøk for B2B), om søkeordene kombineres med sted, og hvordan de fire delene vektes i totalscoren.
+Profiltype
+Kjennetegn
+Konkurrenter fra
+Vekt del 1 / 2 / 3 / 4
+Lokal
+Én adresse, Google-profil, kunder kommer fysisk eller i nærområdet
+Kartet på hovedsøkene
+40 / 30 / 15 / 15
+Flere avdelinger
+Flere underenheter i Brreg, flere Google-profiler
+Kartet per avdeling, samlet
+40 / 30 / 15 / 15
+Nasjonal tjeneste
+Google-profil, men kunder over hele landet (B2C)
+Organisk topp 10 uten sted
+15 / 45 / 25 / 15
+Nettbutikk
+Handlekurv, produktsider, Merchant Center
+Organisk topp 10 + Shopping
+5 / 50 / 25 / 20
+B2B
+Ingen eller passiv Google-profil, kontaktskjema, referanser
+Organisk topp 10 på kategorisøk + LinkedIn-synlighet
+10 / 45 / 35 / 10
+
+Vektene er startverdier og ligger i en egen tabell, profile_weights, så de kan justeres uten deploy. Del 1 forsvinner aldri helt: også en nettbutikk har en Google-profil som kan være feil eller tom, og det er et funn.
+Bølge 2 kjører alle åtte modulene samtidig, så jobben tar like lang tid som den tregeste (crawl), ikke summen. Samlet 2 til 3 minutter og 10 til 18 kr per virksomhet. Konkurrentjobber kjører bare gbp, speed og en lett links, og deles i 30 dager.
+Modulkontrakten. Hver modul er én fil i packages/audit/modules/ som eksporterer:
+export const module: AuditModule = {
+  name: 'gbp',
+  wave: 2,
+  dependsOn: ['resolve'],
+  factors: ['L001', 'L005', 'L006', 'L008', 'L009', 'L011', 'L016', 'L021'],
+  run: async (ctx: AuditContext): Promise<ModuleResult> => {
+    // ctx.business, ctx.keywords, ctx.raw(moduleName), ctx.log
+    // returnerer { raw, findings: Finding[] }
+  },
+};
+Finding er { factorCode, status, value, evidence }. Modulen vet ingenting om vekter eller rapport; den måler og returnerer. score leser factors og regner. Det betyr at Simen kan endre en terskel i databasen uten at noen deployer.
+Tre ting som må være på plass før første kjøring:
+Stedslisten for Norge: fylker, kommuner, byer og bydeler med koordinater (fra Kartverket/SSB), slik at «søkeord + sted» kan bygges for alle, ikke bare Oslo.
+DataForSEO-konto med Google Maps-SERP, keyword suggestions og AI Overview bekreftet for Norge.
+En fixtures/-mappe med lagrede API-svar for tre testvirksomheter i tre profiltyper, så Antigravity kan kjøre hele pipelinen i test uten å bruke kvote.
+Rapporten
+Én side, to tilstander, samme URL. Teaseren og den fulle rapporten er samme Next.js-side som rendrer mer eller mindre av samme JSON, avhengig av unlocked_at.
+Teaseren viser (alt hentes fra report_teasers-viewet, aldri fra reports.json):
+Virksomhetens navn, logo fra Google-profilen, bransje og adresse, så eieren ser at det er dem.
+Samlet score 0-100 mot de tre i kartet, som fire søyler med navn. Dette er det første bildet.
+Antall funn per del: «Lokalt søk: 14 funn, 5 kritiske», fire rader.
+Kroneestimatet: «Tapt synlighet tilsvarer 53 400 kr i måneden i betalt trafikk», med lenke til forutsetningene (som også er åpne).
+Tre funn i klartekst, valgt etter regelen: én fra anmeldelser eller kartplassering, én med konkurrentnavn, én i kroner. Aldri «schema mangler» som første funn.
+Resten av funnene som låste rader: overskrift og alvorlighet synlig, innhold uskarpt. 40 til 60 rader.
+Én knapp: «Åpne hele rapporten, 1 500 kr». Under den: «Du får PDF, konkurrentsammenligning og alle funn med bevis. Ingen abonnement.»
+Full rapport viser i tillegg: hvert funn med bevis (hva ble målt, hvor, når, skjermbilde av kartet), konkurrentenes tall per faktor der de finnes, økonomisiden per søkeord, AI-delen med «hvem nevnes i stedet», og nederst to likestilte utganger: «Ta rapporten med til byrået ditt» (PDF) og «La Floww ta det» (Cal.com). Rapporten sier aldri hvordan noe fikses.
+Tilgang. Slug på 24 tilfeldige tegn er nok til at ingen gjetter. Etter betaling er siden åpen for alle med lenken, med vilje: eieren skal kunne sende den til daglig leder eller byrået sitt. En signert nøkkel (?k=) i kvitterings-e-posten gir i tillegg «Min side» med alle rapporter på samme e-post.
+PDF. En worker åpner rapport.flowwmedia.no/r/{slug}?print=1&k={signert} i Playwright og kjører page.pdf() med A4 og utskrifts-CSS. Samme komponenter, ingen egen PDF-mal. Legges i Storage under reports/{slug}.pdf, signert URL med 7 dagers levetid i e-posten, ny URL hver gang de ber om den fra siden.
+Oppdatering. En rapport lever 12 måneder. Knappen «Kjør på nytt» vises etter 30 dager, koster 490 kr, og bruker samme pipeline. Det er abonnementet uten å kalle det abonnement.
+Betaling og varm lead
+Stripe Checkout i hosted modus: Floww lagrer aldri kortdata, og Stripe håndterer kvittering, mva og tilbakebetaling.
+Knappen kaller POST /api/checkout med slug. Ruten lager en Checkout Session med price for rapporten, client_reference_id = report.id, customer_email forhåndsutfylt, automatic_tax på, og success_url = /r/{slug}?paid=1. Rad i orders med status pending.
+Stripe sender checkout.session.completed til POST /api/stripe/webhook. Ruten verifiserer signaturen, setter orders.status = paid, reports.unlocked_at = now(), og legger en jobb after_payment i køen. Alt i én transaksjon, idempotent på stripe_session_id.
+after_payment-jobben (worker) gjør fire ting parallelt: lager PDF, sender kvittering via Resend med lenke og signert nøkkel, oppretter rad i leads, og poster til Slack.
+Slack-meldingen inneholder: navn, bransje, bydel, score vs konkurrenter, de tre verste funnene, kroneestimat, telefon og daglig leder fra Brreg, og to knapper: «Åpne i admin» og «Marker som ringt». Knappene går via Slack-interaktivitet til /api/slack.
+Kunden får 20 minutter senere e-post nummer to: «Simen ringer deg innen 24 timer. Vil du velge tidspunkt selv?» med Cal.com-lenke. Booking skriver leads.status = meeting via Cal.com-webhook.
+Etter 48 timer uten called_at: nytt Slack-varsel merket «for sent», og kunden får e-post tre med «vi har sett på rapporten din, her er det ene punktet vi ville startet med» (malbasert, fra det verste funnet).
+Admin er én side i samme Next.js-app, bak Supabase Auth med Floww-e-post: tabell over leads med status-dropdown, rapportlenke, telefon, notater, og en kolonne «tid siden betaling» som blir rød etter 24 timer. Ingen CRM før volumet krever det.
+Vipps. Stripe tilbyr ikke Vipps i dag, så vidt jeg vet; sjekk Stripes betalingsmetoder for Norge før dette låses. Vipps MobilePay har eget Checkout-API og løfter konvertering på mobil merkbart i Norge. Anbefaling: lanser med Stripe (kort, Apple Pay, Google Pay), mål hvor mange som starter Checkout uten å fullføre, og legg til Vipps som egen knapp i skive 7 hvis frafallet på mobil er over 50 %.
+Faktura. Noen større selskaper og offentlige virksomheter vil ha faktura. Stripe Checkout støtter payment_method_types: ['card', 'customer_balance'] med bankoverføring, men enklere: en lenke «Be om faktura» som lager en Stripe Invoice med 14 dagers frist og låser opp ved invoice.paid. Samme webhook-mønster.
+Refusjon. Ingen angrerett på digitalt innhold som er levert, men vilkårene må si det før betaling. En «ikke fornøyd»-lenke i kvitteringen som går til Simen koster lite og gir færre chargebacks.
+Bulk-distribusjon
+Bulk er samme pipeline med en annen inngang: en kampanje i admin i stedet for et skjema på nettsiden. Alt som skjer etter at jobben er i kø, er identisk.
+Kampanje. Admin velger NACE-kode og postnummerintervall (0250-0290 for Oslo vest, for eksempel), eller limer inn en liste med domener og e-poster for utvalgte leads. Fra en liste hoppes Brreg-uttrekket over; resten er likt. Riggen henter alle aktive enheter fra Brreg med hjemmeside satt, viser antall og fordeling AS/ENK, og lagrer i campaigns.
+Vask. Domener normaliseres (www, https, Facebook-sider og Finn-lenker forkastes). Duplikater på domene slås sammen (kjeder). Virksomheter som allerede har rapport yngre enn 90 dager hoppes over. ENK merkes channel = phone, resten channel = email.
+Kjøring. Jobbene legges i kø med lav prioritet og kjøres om natten med 4 til 8 workers. 400 virksomheter på 2,5 minutter hver med 6 workers er under 3 timer. Konkurrentjobbene deles, så de fleste er cachet etter de første 50.
+Kvalitetssperre. Rapporter der resolve ikke fant Google-profil, eller der crawl fikk under 3 sider, sendes ikke. De havner i en admin-liste «trenger blikk». Erfaringsmessig 10 til 15 %.
+Utsending i tre steg per virksomhet, styrt av en outreach-worker som kjører hver time:
+Steg 1, dag 0: teaser-e-post til firmaadressen fra Brreg (post@, kontakt@). Emne: «{Navn}: {n} kritiske funn i Google». Én setning per teaser-funn, kroneestimatet, lenken. Maks 100 per dag de to første ukene, deretter 200.
+Steg 2, dag 4: til de som åpnet eller klikket uten å kjøpe. Kortere, ett nytt funn, samme lenke.
+Steg 3, dag 8: ringeliste i admin: alle som klikket, alle ENK, og alle som betalte. Sortert etter score (lavest først) og kroneestimat.
+Måling. Per kampanje: sendt, levert, åpnet, klikket, startet Checkout, betalt. Vises i admin som en trakt. Terskelen for å fortsette etter de første 50: over 30 % åpning og minst 5 klikk. Under det er det teaseren som justeres, ikke listen.
+Avsenderdomene. Egen subdomene, rapport.flowwmedia.no, med SPF, DKIM og DMARC satt opp i Resend før første sending. Oppvarming: 20 per dag første uke, dobling hver uke. Avmelding i hver mail (List-Unsubscribe header pluss lenke), og avmeldte skrives til outreach.unsubscribed_at og sperres i alle fremtidige kampanjer.
+Juridisk, oppsummert fra datarigg-notatet: AS og andre selskapsformer kan få uoppfordret e-post til firmaadresse (markedsføringsloven § 15), ENK kan ikke. ENK kan ringes hvis nummeret ikke står i Reservasjonsregisteret; riggen vasker ringelisten mot det før den vises. Personvernerklæring for rapporten på flowwmedia.no, og en slett-meg-lenke som fjerner businesses-raden og rapporten.
+Hvorfor dette er riktig rekkefølge: bulk bygges sist (skive 6), men designes nå. Alt i pipelinen må tåle å kjøre 400 ganger på en natt uten at noen ser på, og det stiller krav til retry, cache og kvalitetssperren som er lettere å bygge inn fra start enn å legge til etterpå.
+Hva mates inn hvor
+Riggen har tolv innganger. Seks av dem fylles én gang av Simen, resten henter den selv. Tabellen er sjekklisten for at alt er på plass før første kjøring.
+Inndata
+Hvor den legges
+Format
+Fylles av
+Når
+Faktorlisten (del 1-4, negative faktorer)
+packages/factors/factors.csv → factors-tabellen via pnpm seed
+CSV eksportert fra regnearket, én rad per faktor
+Simen
+Før skive 1, justeres i admin etter skive 3
+Gruppevekter (Whitespark) og undergruppevekter (del 2)
+Samme CSV, kolonnene weight_*
+Prosent
+Simen
+Før skive 1; gule celler i regnearket må fylles først
+Vekter per profiltype
+profile_weights-tabellen
+5 rader × 4 kolonner
+Simen
+Før skive 4
+Terskler (ok/advarsel/kritisk)
+factors.threshold_*, redigerbar i admin
+Tekst eller tall per faktor
+Simen etter testkjøring
+Skive 3
+Stedsliste for Norge
+packages/audit/geo/places.json
+Kommune, by, bydel, koordinat
+Hentes én gang fra Kartverket/SSB, script i repo
+Skive 1
+Bransjeordbok (overstyring)
+keywords-tabellen med source = manual
+NACE, søkeord, forventet Google-kategori, bransjekataloger, attributter
+Simen, valgfritt per bransje
+Når automatikken bommer
+Konverteringsrate og kundeverdi per NACE
+nace_benchmarks-tabellen, med fallback-rad for ukjent NACE
+NACE, rate, verdi, kilde
+Simen, med kilde per rad
+Før skive 4; fallback kan brukes fra start
+Klikkandel per posisjon
+ctr_model-tabellen
+Posisjon, andel, kilde
+Start: bransjeestimat; erstattes av Search Console-tall fra Floww-kunder
+Skive 4
+AI-spørsmålsmaler
+packages/audit/ai/questions.ts
+10 maler med plassholdere for tjeneste, sted, firmanavn, attributt
+Simen godkjenner, Antigravity skriver
+Skive 3
+Teaser-regel (topp 3 funn)
+packages/audit/score.ts, konfig i teaser_rules
+Regel per plass: anmeldelser/kart, konkurrentnavn, kroner
+Simen
+Skive 4
+E-postmaler (teaser, kvittering, oppfølging 1-3, lead-varsel)
+apps/worker/templates/*.tsx (React Email)
+Tekst med plassholdere, Simens tone
+Simen skriver, Antigravity koder
+Skive 5-7
+Vilkår, personvern, angrerettsunntak
+apps/rapport/content/*.md
+Markdown
+Simen
+Før skive 5
+API-nøkler og konfig
+Railway env (workers) og Vercel env (web)
+DATAFORSEO_LOGIN/PASSWORD, GOOGLE_PLACES_KEY, PSI_KEY, OPENAI_KEY, GEMINI_KEY, PERPLEXITY_KEY, STRIPE_SECRET, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_ID, RESEND_KEY, SLACK_WEBHOOK, CALCOM_URL, SUPABASE_URL, SUPABASE_SERVICE_KEY, EMAIL_ALLOWLIST (test)
+Simen oppretter kontoene, Antigravity leser bare env
+Skive 1 (Supabase), 3 (data), 5 (Stripe, Resend, Slack)
+Domener å kjøre
+Selvbetjening: /rapport. Bulk: kampanje i admin (NACE + postnummer) eller limt liste. Utvalgte leads: «Send teaser» i admin med domene og e-post
+Domene, valgfritt e-post og kontaktnavn
+Kunden selv, eller Simen/Anders/Marja i admin
+Fra skive 6
+
+Det riggen henter selv, uten inndata: orgnr, selskapsform, NACE, adresse og underenheter fra Brreg; Google-profilen fra Places; søkeord, volum, CPC, kart, organisk, annonser og lenker fra DataForSEO; hastighet fra PageSpeed; katalogoppføringer ved crawl; AI-svar fra de tre modellene; konkurrenter fra kartet eller organisk topp 10 etter profiltype.
+Tre nye tabeller i tillegg til de fjorten i datamodellen: profile_weights, nace_benchmarks og ctr_model. Alle tre er små, redigeres i admin, og leses ved kjøring. Regelen er den samme som for factors: alt som er et faglig valg ligger i databasen, alt som er mekanikk ligger i kode.
+Slik styres Antigravity
+Antigravity får tre dokumenter og én skive om gangen. Den får aldri hele planen som én oppgave.
+Repo-struktur (ny app og pakker i Tannlegepriser-monorepoet):
+apps/
+  rapport/            Next.js: /rapport, /r/[slug], /admin, /api/*
+  worker/             Node + pg-boss: audit, competitor, after_payment, outreach, pdf
+packages/
+  db/                 Drizzle-schema, migrasjoner, RLS-policyer (fra Tannlegepriser)
+  audit/              modules/*.ts, score.ts, types.ts, fixtures/
+  factors/            factors.csv eksportert fra regnearket + seed-script
+  report-ui/          React-komponenter delt mellom web og PDF
+  clients/            brreg, places (fra Tannlegepriser), dataforseo, psi, llm, resend, stripe
+AGENTS.md             regler (utvides)
+MASTER-SPEC.md        dette dokumentet, skive for skive
+De tre dokumentene:
+AGENTS.md, utvidet med reglene for denne pakken: Places-data 30 dager, aldri anmeldelsestekst, høflig crawl med egen user-agent, ENK-filter, ingen SERP-skraping av Google, alle API-nøkler i env, hver modul kjørbar alene mot fixtures.
+MASTER-SPEC.md: dette dokumentet, med skivene under. Antigravity leser det, men jobber bare på skiven som er «aktiv».
+packages/factors/factors.csv: regnearket. Det er fasiten for hva som skal måles.
+Skivene. Hver skive har en test som må passere før neste startes, og Antigravity leverer en byggerapport (hva ble gjort, hva feilet, hva er antatt) uten egenvurdering.
+Skive
+Bygges
+Ferdig når
+Tid
+1. Fundament
+packages/db med alle 14 tabeller, RLS, pg-boss, packages/factors seed, worker som plukker en tom jobb og setter done
+pnpm seed laster 187 + 53 + 20 + 11 faktorer; en jobb går queued → done på Railway
+3 dager
+2. Resolve + GBP + crawl
+De tre første modulene mot fixtures og live, med findings skrevet
+Testvirksomhet 1 gir riktig orgnr, Places-id og 40+ sider crawlet; findings for L001-L021 og G-koder stemmer med Simens manuelle sjekk
+4 dager
+3. Resten av bølge 2
+serp, speed, links, citations, mentions, ai
+Tre testvirksomheter i tre profiltyper (lokal, nasjonal B2B, nettbutikk) kjørt ende til ende; Simen godkjenner findings mot egne rapporter; avvik justeres i factors, ikke i kode
+5 dager
+4. Score + rapport-JSON + teaser
+score.ts, reports, teaser-regelen for topp 3, kroneestimat, /r/[slug] i teaser-modus
+Teaseren for testvirksomhet 1 leses av Anders og Marja uten forklaring, og de forstår hva som er galt
+4 dager
+5. Betaling
+Stripe Checkout, webhook, opplåsing, full rapport, PDF, kvittering, Slack, leads, admin
+Én ekte betaling på 10 kr går hele veien til Slack og PDF; refusjon virker
+4 dager
+6. Selvbetjening
+/rapport med Brreg-oppslag, magic link, ventesiden med Realtime, teaser på e-post
+En fremmed legger inn domenet sitt og får teaser på e-post innen 5 minutter uten at noen i Floww gjør noe
+3 dager
+7. Bulk
+Kampanjer, Brreg-uttrekk, vask, nattkjøring med flere workers, kvalitetssperre, outreach-worker, avmelding, Reservasjonsregister
+100 virksomheter i én bransje kjørt på en natt; 50 teasere sendt med måling av åpning og klikk
+5 dager
+8. Herding
+Sentry, alarm ved feilet jobb, kostnadsmåler per jobb, Vipps-vurdering, «kjør på nytt», faktura
+En uke i drift uten manuell inngripen
+3 dager
+
+Sum rundt 31 arbeidsdager for Antigravity, med Simens godkjenning som port mellom hver skive. Skive 3 er den eneste som krever Simens tid for alvor: der sammenlignes riggens funn mot manuelle rapporter, og tersklene justeres.
+Fem instruksjoner som sparer omganger:
+Hver modul først mot fixtures/, deretter live. Antigravity skal ikke bruke API-kvote på å lete etter feil.
+Alle tall som vises i rapporten skal ha en evidence som peker til rådata. Ingen tall uten kilde.
+Terskler og vekter leses fra factors-tabellen ved kjøring. Ingen hardkoding.
+Ingen e-post sendes fra kode før skive 6, og da bare til adresser på en allowlist i env.
+Byggerapporten skal nevne hva som er antatt. Et punkt uten antakelser er et punkt som ikke er sjekket.
+Kostnader og beslutninger
+Faste kostnader ligger rundt 1 500 kr i måneden før volum. Variabel kostnad er 10 til 18 kr per rapport, så 400 teasere koster 4 000 til 7 000 kr i data.
+Post
+Månedlig
+Kommentar
+Vercel Pro
+ca. 220 kr
+Én seat; Hobby holder til testing
+Supabase Pro
+ca. 280 kr
+Trengs for pg_cron, daglige backups og mer lagring
+Railway
+200-800 kr
+Én worker i ro, 6 under nattkjøring; betales per time
+DataForSEO
+forskudd, 50 USD min.
+SERP, volum og lenker; 5-12 kr per rapport
+OpenAI + Gemini + Perplexity
+3-5 kr per rapport
+Kun i ai-modulen
+Resend
+0-220 kr
+Gratis til 3 000 e-poster, Pro over
+Stripe
+1,9 % + 2 kr per salg
+Ca. 31 kr per rapport solgt
+Sentry
+0
+Gratisnivå holder
+Cal.com
+0
+Gratis for én bruker
+
+Beslutninger som må tas før skive 1:
+☐ Pris inkl. eller eks. mva. 1 500 eks. mva blir 1 875 på kortet. For et AS er det likegyldig, for inntrykket betyr det noe. Anbefaling: 1 490 eks. mva, vist som «1 490 kr + mva».
+☐ Rapportens navn og domene. rapport.flowwmedia.no er foreslått. Eget domene senere hvis produktet skal selges til andre byråer.
+☐ Tannlegepriser-repoet som base, eller nytt repo. Samme repo sparer crawler, Brreg, Places og Drizzle, men Marja må være med på det.
+☐ DataForSEO-konto opprettes og testes på ett Oslo-søk med Maps og AI Overview før skive 3.
+☐ Hvem ringer, og innen hvor lang tid. 24 timer er lovet i e-posten; det må holdes.
+☐ Slack-kanal og Cal.com-konto opprettes av Simen, nøkler i Railway og Vercel env.
+☐ Vilkår og personvernerklæring for rapporten skrives før skive 5. Kort, på norsk, med angrerettsunntaket for digitalt innhold.
+Beslutninger som kan vente til skive 7: Vipps, faktura, «kjør på nytt»-pris, hvilke bransjer bulk starter med, og om rapporten skal kunne kjøpes av byråer på vegne av kunder (white label).
+Kilder
+Whitespark, Local Search Ranking Factors 2026 for faktorene og vektene.
+Datarigg-notatet av 9. oktober 2026 for scoringmodell, juridisk vurdering og den opprinnelige fasedelingen.
+Faktorlisten i Synlighetsrapporten_faktorliste.xlsx av 13. oktober 2026.
+

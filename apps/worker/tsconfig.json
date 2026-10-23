@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@floww/db": ["../../packages/db/src/index.ts"],
+      "@floww/audit": ["../../packages/audit/src/index.ts"]
+    },
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}

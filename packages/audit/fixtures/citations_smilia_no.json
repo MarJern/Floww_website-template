@@ -1,0 +1,80 @@
+{
+  "companyName": "Smilia Tannklinikk",
+  "primaryPhone": "22 60 00 00",
+  "primaryAddress": "Sørkedalsveien 11G, 0369 Oslo",
+  "directories": [
+    {
+      "id": "1881",
+      "name": "1881.no",
+      "domain": "1881.no",
+      "present": true,
+      "url": "https://www.1881.no/tannleger/tannleger-oslo/smilia-tannklinikk_102938475S1/",
+      "matchedNap": false,
+      "hasAddressDiscrepancy": true,
+      "hasPhoneDiscrepancy": false,
+      "notes": "Oppført med eldre adresseformat (Sørkedalsveien 11 uten oppgang G)"
+    },
+    {
+      "id": "gulesider",
+      "name": "Gule Sider",
+      "domain": "gulesider.no",
+      "present": true,
+      "url": "https://www.gulesider.no/smilia+tannklinikk+oslo/bedrifter",
+      "matchedNap": false,
+      "hasAddressDiscrepancy": false,
+      "hasPhoneDiscrepancy": true,
+      "notes": "Viser gammelt telefonnummer 22 12 34 56 i stedet for 22 60 00 00"
+    },
+    {
+      "id": "proff",
+      "name": "Proff.no",
+      "domain": "proff.no",
+      "present": true,
+      "url": "https://proff.no/selskap/smilia-tannklinikk-as/oslo/helsetjenester/IF0ABCD/",
+      "matchedNap": true,
+      "hasAddressDiscrepancy": false,
+      "hasPhoneDiscrepancy": false
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "domain": "facebook.com",
+      "present": true,
+      "url": "https://facebook.com/smiliatannklinikk",
+      "matchedNap": false,
+      "hasAddressDiscrepancy": false,
+      "hasPhoneDiscrepancy": true,
+      "notes": "Mangler oppdatert åpningstid og lenke til timebestilling"
+    },
+    {
+      "id": "apple_maps",
+      "name": "Apple Maps",
+      "domain": "maps.apple.com",
+      "present": false,
+      "matchedNap": false,
+      "hasAddressDiscrepancy": false,
+      "hasPhoneDiscrepancy": false,
+      "notes": "Ikke verifisert på Apple Business Connect (kritisk for iPhone/Siri)"
+    },
+    {
+      "id": "bing_places",
+      "name": "Bing Places",
+      "domain": "bing.com",
+      "present": false,
+      "matchedNap": false,
+      "hasAddressDiscrepancy": false,
+      "hasPhoneDiscrepancy": false,
+      "notes": "Mangler verifisert Bing Places-oppføring (brukes direkte av ChatGPT Search)"
+    }
+  ],
+  "totalPresent": 4,
+  "totalExpected": 6,
+  "primarySearchEngines": {
+    "google": true,
+    "bing": false,
+    "apple": false,
+    "allIdentical": false,
+    "missingCount": 1
+  },
+  "evaluatedAt": "2026-10-14T08:00:00.000Z"
+}

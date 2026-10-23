@@ -1,0 +1,240 @@
+{
+  "overallMentionRate": 0.20,
+  "averagePositionWhenMentioned": 4.5,
+  "citationRate": 0.20,
+  "napAccuracyRate": 0.85,
+  "hasEntitySameAs": false,
+  "hasLlmsTxt": false,
+  "topCompetitorsMentioned": [
+    { "name": "Oslo Tannlegesenter", "mentionsCount": 27 },
+    { "name": "Colosseum Tannlege Majorstuen", "mentionsCount": 24 },
+    { "name": "Blid Tannlege Bogstadveien", "mentionsCount": 21 },
+    { "name": "Tannfeen Oslo", "mentionsCount": 14 }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "category": "Generell anbefaling",
+      "prompt": "Hvilken tannlege i Oslo anbefales for voksne pasienter?"
+    },
+    {
+      "id": "Q2",
+      "category": "Bydel / Lokasjon",
+      "prompt": "Beste tannklinikk på Majorstuen i Oslo med gode anmeldelser?"
+    },
+    {
+      "id": "Q3",
+      "category": "Akutt behov",
+      "prompt": "Hvor får jeg akutt tannlegetime på dagen i Oslo?"
+    },
+    {
+      "id": "Q4",
+      "category": "Spesialbehandling",
+      "prompt": "Hvem er best på usynlig tannregulering (Invisalign) i Oslo?"
+    },
+    {
+      "id": "Q5",
+      "category": "Høy-margin behandling",
+      "prompt": "Anbefalt tannlege for tannimplantat og krone i Oslo?"
+    },
+    {
+      "id": "Q6",
+      "category": "Pris & Verdi",
+      "prompt": "Rimelig og dyktig tannlege i Oslo med transparente priser?"
+    },
+    {
+      "id": "Q7",
+      "category": "Tannlegeskrekk",
+      "prompt": "Hvilken tannklinikk i Oslo er best for pasienter med tannlegeskrekk (odontofobi)?"
+    },
+    {
+      "id": "Q8",
+      "category": "Estetisk behandling",
+      "prompt": "Hvor bør man ta profesjonell tannbleking på Majorstuen i Oslo?"
+    },
+    {
+      "id": "Q9",
+      "category": "Åpningstider & Tilgjengelighet",
+      "prompt": "Tannlege i Oslo med kveldsåpent og enkel timebestilling på nett?"
+    },
+    {
+      "id": "Q10",
+      "category": "Direkte merkevaresjekk",
+      "prompt": "Hva vet du om Smilia Tannklinikk i Sørkedalsveien 11G på Majorstuen, og hvordan vurderes de mot andre tannleger i Oslo?"
+    }
+  ],
+  "results": [
+    {
+      "questionId": "Q1",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Colosseum Tannlege Majorstuen", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "Blant de mest anbefalte tannklinikkene i Oslo trekkes Oslo Tannlegesenter, Colosseum Tannlege og Blid Tannlege frem på grunn av høyt antall pasientvurderinger og bred spesialistkompetanse."
+    },
+    {
+      "questionId": "Q1",
+      "model": "gemini",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "Basert på Google-anmeldelser og pasientomtaler i Oslo er Oslo Tannlegesenter (4.9★) og Blid Tannlege blant de høyest rangerte valgene."
+    },
+    {
+      "questionId": "Q1",
+      "model": "claude",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "De mest anerkjente tannklinikkene i Oslo med bred fagkompetanse og høye pasientvurderinger er Oslo Tannlegesenter og Colosseum Tannlege."
+    },
+    {
+      "questionId": "Q1",
+      "model": "perplexity",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Ifølge kåringer på Legelisten og uavhengige guider i Oslo anbefales Oslo Tannlegesenter og Colosseum Tannlege."
+    },
+    {
+      "questionId": "Q2",
+      "model": "chatgpt",
+      "mentioned": true,
+      "position": 4,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen", "Blid Tannlege Bogstadveien", "Oslo Tannlegesenter"],
+      "responseSnippet": "På Majorstuen finner du Colosseum Tannlege, Blid Tannlege i Bogstadveien og Smilia Tannklinikk i Sørkedalsveien 11G."
+    },
+    {
+      "questionId": "Q2",
+      "model": "gemini",
+      "mentioned": true,
+      "position": 5,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "Høyt vurderte tannklinikker på Majorstuen inkluderer Colosseum Tannlege, Blid Bogstadveien og Smilia Tannklinikk."
+    },
+    {
+      "questionId": "Q2",
+      "model": "claude",
+      "mentioned": true,
+      "position": 4,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "Blant tannklinikker på Majorstuen med gode omtaler trekkes Colosseum Tannlege, Blid Tannlege og Smilia Tannklinikk frem."
+    },
+    {
+      "questionId": "Q2",
+      "model": "perplexity",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Colosseum Tannlege Majorstuen", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "De mest omtalte klinikkene på Majorstuen er Colosseum Tannlege og Blid Tannlege."
+    },
+    {
+      "questionId": "Q3",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Tannfeen Oslo"],
+      "responseSnippet": "For akutt tannlegehjelp på dagen i Oslo anbefales Oslo Tannlegesenter og Tannfeen, som begge har dedikert tannlegevakt 365 dager i året."
+    },
+    {
+      "questionId": "Q4",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Blid Tannlege Bogstadveien", "Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "For usynlig tannregulering (Invisalign) i Oslo har Blid Tannlege og Colosseum Tannlege omfattende fagartikler og egne spesialister."
+    },
+    {
+      "questionId": "Q5",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "For tannimplantat i Oslo anbefales klinikker med oralkirurg og dedikerte informasjonssider som Oslo Tannlegesenter og Colosseum."
+    },
+    {
+      "questionId": "Q6",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Blid Tannlege Bogstadveien", "Tannfeen Oslo"],
+      "responseSnippet": "Blid Tannlege og Tannfeen trekkes ofte frem for oversiktlige prislister og faste priser på undersøkelse."
+    },
+    {
+      "questionId": "Q7",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Oslo Tannlegesenter og Colosseum Tannlege har egne behandlingstilbud og fagsider for pasienter med odontofobi (tannlegeskrekk)."
+    },
+    {
+      "questionId": "Q8",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Blid Tannlege Bogstadveien", "Oslo Tannlegesenter"],
+      "responseSnippet": "Blid Tannlege i Bogstadveien og Oslo Tannlegesenter er blant de mest siterte klinikkene for skånsom klinikkbleking."
+    },
+    {
+      "questionId": "Q9",
+      "model": "chatgpt",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Oslo Tannlegesenter", "Blid Tannlege Bogstadveien"],
+      "responseSnippet": "Oslo Tannlegesenter og Blid Tannlege tilbyr kveldsåpent til kl. 20–21 og direkte online booking."
+    },
+    {
+      "questionId": "Q10",
+      "model": "chatgpt",
+      "mentioned": true,
+      "position": 1,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Smilia Tannklinikk ligger i Sørkedalsveien 11G på Majorstuen i Oslo og tilbyr allmenn tannbehandling, akutt hjelp og tannbleking, men har færre uavhengige omtaler enn de største kjedene."
+    },
+    {
+      "questionId": "Q10",
+      "model": "gemini",
+      "mentioned": true,
+      "position": 1,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Smilia Tannklinikk i Sørkedalsveien 11G på Majorstuen tilbyr tannbehandling i Oslo."
+    },
+    {
+      "questionId": "Q10",
+      "model": "claude",
+      "mentioned": true,
+      "position": 1,
+      "citedDomain": "https://www.smilia.no/",
+      "othersMentioned": ["Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Smilia Tannklinikk er en lokal tannklinikk på Majorstuen i Oslo (Sørkedalsveien 11G)."
+    },
+    {
+      "questionId": "Q10",
+      "model": "perplexity",
+      "mentioned": false,
+      "position": null,
+      "citedDomain": null,
+      "othersMentioned": ["Colosseum Tannlege Majorstuen"],
+      "responseSnippet": "Begrenset tredjepartsomtale sammenlignet med større tannlegekjeder på Majorstuen."
+    }
+  ],
+  "evaluatedAt": "2026-10-14T08:00:00.000Z"
+}

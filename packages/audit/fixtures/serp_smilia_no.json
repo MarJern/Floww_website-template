@@ -1,0 +1,163 @@
+{
+  "domain": "smilia.no",
+  "primaryKeyword": "tannlege oslo",
+  "keywords": [
+    {
+      "keyword": "tannlege oslo",
+      "volume": 1250,
+      "cpc": 68,
+      "mapRank": 0,
+      "orgRank": 5,
+      "hasAiOverview": true
+    },
+    {
+      "keyword": "tannlege majorstuen",
+      "volume": 380,
+      "cpc": 58,
+      "mapRank": 3,
+      "orgRank": 4,
+      "hasAiOverview": false
+    },
+    {
+      "keyword": "akutt tannlege oslo",
+      "volume": 680,
+      "cpc": 84,
+      "mapRank": 0,
+      "orgRank": 7,
+      "hasAiOverview": true
+    },
+    {
+      "keyword": "tannbleking oslo",
+      "volume": 390,
+      "cpc": 52,
+      "mapRank": 0,
+      "orgRank": 6,
+      "hasAiOverview": true
+    },
+    {
+      "keyword": "usynlig tannregulering oslo",
+      "volume": 260,
+      "cpc": 76,
+      "mapRank": 0,
+      "orgRank": 8,
+      "hasAiOverview": true
+    },
+    {
+      "keyword": "tannimplantat oslo",
+      "volume": 210,
+      "cpc": 95,
+      "mapRank": 0,
+      "orgRank": 0,
+      "hasAiOverview": true
+    }
+  ],
+  "snapshots": [
+    {
+      "keyword": "tannlege oslo",
+      "gridPoint": "center",
+      "geoGrid": {
+        "centerLat": 59.9304,
+        "centerLng": 10.7138,
+        "radiusKm": 4.0,
+        "points": [
+          { "id": "nw", "label": "Vinderen / Slemdal", "lat": 59.9484, "lng": 10.6777, "offsetKmX": -2.0, "offsetKmY": 2.0, "mapRank": 5 },
+          { "id": "n", "label": "Ullevål / Blindern", "lat": 59.9484, "lng": 10.7138, "offsetKmX": 0.0, "offsetKmY": 2.0, "mapRank": 4 },
+          { "id": "ne", "label": "Sagene / Torshov", "lat": 59.9484, "lng": 10.7499, "offsetKmX": 2.0, "offsetKmY": 2.0, "mapRank": 7 },
+          { "id": "w", "label": "Skøyen / Ullern", "lat": 59.9304, "lng": 10.6777, "offsetKmX": -2.0, "offsetKmY": 0.0, "mapRank": 5 },
+          { "id": "c", "label": "Majorstuen", "lat": 59.9304, "lng": 10.7138, "offsetKmX": 0.0, "offsetKmY": 0.0, "mapRank": 3 },
+          { "id": "e", "label": "St. Hanshaugen", "lat": 59.9304, "lng": 10.7499, "offsetKmX": 2.0, "offsetKmY": 0.0, "mapRank": 5 },
+          { "id": "sw", "label": "Frogner / Bygdøy", "lat": 59.9124, "lng": 10.6777, "offsetKmX": -2.0, "offsetKmY": -2.0, "mapRank": 4 },
+          { "id": "s", "label": "Solli / Nationaltheatret", "lat": 59.9124, "lng": 10.7138, "offsetKmX": 0.0, "offsetKmY": -2.0, "mapRank": 6 },
+          { "id": "se", "label": "Oslo Sentrum", "lat": 59.9124, "lng": 10.7499, "offsetKmX": 2.0, "offsetKmY": -2.0, "mapRank": 8 }
+        ],
+        "averageMapRank": 5.2
+      },
+      "mapTop3": [
+        {
+          "placesId": "ChIJ67890",
+          "title": "Oslo Tannlegesenter",
+          "rating": 4.9,
+          "reviewsCount": 428,
+          "rank": 1,
+          "isTargetBusiness": false
+        },
+        {
+          "placesId": "ChIJ11223",
+          "title": "Colosseum Tannlege Majorstuen",
+          "rating": 4.8,
+          "reviewsCount": 312,
+          "rank": 2,
+          "isTargetBusiness": false
+        },
+        {
+          "placesId": "ChIJ44556",
+          "title": "Blid Tannlege Bogstadveien",
+          "rating": 4.8,
+          "reviewsCount": 265,
+          "rank": 3,
+          "isTargetBusiness": false
+        }
+      ],
+      "organicTop10": [
+        {
+          "domain": "oslotannlegesenter.no",
+          "url": "https://oslotannlegesenter.no",
+          "title": "Oslo Tannlegesenter | Tannlegevakt & Spesialister i Oslo",
+          "rank": 1,
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "colosseumtannlege.no",
+          "url": "https://colosseumtannlege.no/klinikker/oslo/majorstuen",
+          "title": "Colosseum Tannlege Majorstuen Oslo",
+          "rank": 2,
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "blid.no",
+          "url": "https://blid.no/klinikker/bogstadveien",
+          "title": "Blid Tannlege Oslo — Bestill time på 1 minutt",
+          "rank": 3,
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "tannfeen.no",
+          "url": "https://tannfeen.no/tannlege-oslo",
+          "title": "Tannfeen Oslo — Rimelig tannlege med lang åpningstid",
+          "rank": 4,
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "smilia.no",
+          "url": "https://www.smilia.no",
+          "title": "Tannlege Majorstuen Oslo | Smilia Tannklinikk",
+          "rank": 5,
+          "isTargetBusiness": true
+        }
+      ],
+      "ads": [
+        {
+          "domain": "oslotannlegesenter.no",
+          "title": "Akutt Tannlege Oslo - Ledig Time I Dag",
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "blid.no",
+          "title": "Blid Tannlege Majorstuen - Undersøkelse 695 kr",
+          "isTargetBusiness": false
+        },
+        {
+          "domain": "colosseumtannlege.no",
+          "title": "Colosseum Tannlege Oslo - Erfarne Tannleger",
+          "isTargetBusiness": false
+        }
+      ],
+      "aiOverview": true,
+      "targetMapRank": null,
+      "targetOrganicRank": 5
+    }
+  ],
+  "hasCompetitorAdsOnBrand": true,
+  "hasOwnAds": false,
+  "evaluatedAt": "2026-10-14T08:00:00.000Z"
+}

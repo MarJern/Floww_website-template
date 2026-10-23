@@ -1,0 +1,10 @@
+{
+  "score": 56,
+  "lcpSeconds": 4.4,
+  "inpMs": 285,
+  "clsScore": 0.045,
+  "ttfbSeconds": 1.1,
+  "accessibilityScore": 86,
+  "source": "crux",
+  "testedUrl": "https://smilia.no"
+}

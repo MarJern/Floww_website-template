@@ -1,0 +1,137 @@
+{
+  "domain": "smilia.no",
+  "crawledPagesCount": 6,
+  "brokenLinks404Count": 4,
+  "hasSitemap": true,
+  "hasHttps": true,
+  "aiRobotsAllowed": true,
+  "completedAt": "2026-10-14T08:00:00.000Z",
+  "pages": [
+    {
+      "url": "https://www.smilia.no/",
+      "statusCode": 200,
+      "title": "Tannlege Majorstuen Oslo | Smilia Tannklinikk",
+      "metaDescription": "Moderne tannklinikk på Majorstuen i Oslo. Akutthjelp, tannbleking, usynlig tannregulering og profesjonell tannbehandling.",
+      "h1Count": 1,
+      "h1Texts": ["Tannlege på Majorstuen i Oslo"],
+      "h2Count": 4,
+      "h3Count": 6,
+      "canonical": "https://www.smilia.no/",
+      "hasSchema": true,
+      "schemas": ["Dentist"],
+      "internalLinksCount": 12,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 0
+    },
+    {
+      "url": "https://www.smilia.no/tjenester/akutt-tannlege",
+      "statusCode": 200,
+      "title": "Akutt Tannlege Oslo | Time på dagen hos Smilia",
+      "metaDescription": "Tannverk eller skade? Vi har akutt-tannlege på Majorstuen i Oslo med ledige timer på dagen og kveldsåpent.",
+      "h1Count": 1,
+      "h1Texts": ["Akutt tannlege i Oslo"],
+      "h2Count": 3,
+      "h3Count": 4,
+      "canonical": "https://www.smilia.no/tjenester/akutt-tannlege",
+      "hasSchema": true,
+      "schemas": ["Dentist", "FAQPage"],
+      "internalLinksCount": 8,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 1
+    },
+    {
+      "url": "https://www.smilia.no/tjenester/tannbleking",
+      "statusCode": 200,
+      "title": "Skånsom Tannbleking | Smilia Tannklinikk",
+      "metaDescription": "Hvitere tenner hos tannpleier.",
+      "h1Count": 1,
+      "h1Texts": ["Tannbleking"],
+      "h2Count": 2,
+      "h3Count": 3,
+      "canonical": "https://www.smilia.no/tjenester/tannbleking",
+      "hasSchema": false,
+      "schemas": [],
+      "internalLinksCount": 7,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 1
+    },
+    {
+      "url": "https://www.smilia.no/tjenester/usynlig-tannregulering",
+      "statusCode": 200,
+      "title": "Usynlig Tannregulering | Smilia",
+      "metaDescription": "Rett opp tennene med transparente skinner.",
+      "h1Count": 1,
+      "h1Texts": ["Usynlig tannregulering"],
+      "h2Count": 3,
+      "h3Count": 5,
+      "canonical": "https://www.smilia.no/tjenester/usynlig-tannregulering",
+      "hasSchema": false,
+      "schemas": [],
+      "internalLinksCount": 7,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 1
+    },
+    {
+      "url": "https://www.smilia.no/priser",
+      "statusCode": 200,
+      "title": "Prisliste Tannbehandling Oslo | Smilia Tannklinikk",
+      "metaDescription": "Se våre faste og forutsigbare priser på tannbehandling på Majorstuen i Oslo. Studentrabatt tilgjengelig.",
+      "h1Count": 1,
+      "h1Texts": ["Prisliste"],
+      "h2Count": 4,
+      "h3Count": 2,
+      "canonical": "",
+      "hasSchema": false,
+      "schemas": [],
+      "internalLinksCount": 9,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 1
+    },
+    {
+      "url": "https://www.smilia.no/kontakt",
+      "statusCode": 200,
+      "title": "Kontakt Oss | Smilia Tannklinikk Majorstuen Oslo",
+      "metaDescription": "Finn veien til klinikken i Sørkedalsveien 11G på Majorstuen i Oslo. Ring oss på 22 60 00 00 eller bestill time på nett.",
+      "h1Count": 1,
+      "h1Texts": ["Kontakt Smilia Tannklinikk"],
+      "h2Count": 2,
+      "h3Count": 1,
+      "canonical": "",
+      "hasSchema": false,
+      "schemas": [],
+      "internalLinksCount": 6,
+      "hasTelLink": true,
+      "hasBookingCta": true,
+      "napDetected": {
+        "phones": ["22600000"],
+        "postcodes": ["0369"]
+      },
+      "depth": 1
+    }
+  ]
+}
